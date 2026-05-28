@@ -1,0 +1,79 @@
+services:
+  # ---------------------------------------------------------------
+  # Service applicatif PHP 8.3 (aligné sur l'hébergement OVH)
+  # Composer est installé dans l'image, ce qui évite toute
+  # installation locale sur le poste Windows.
+  # ---------------------------------------------------------------
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: finkashi_php
+    volumes:
+      # Le code du poste est monté dans le conteneur : toute
+      # modification est immédiatement prise en compte.
+      - .:/var/www/html
+    ports:
+      - "8080:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: finkashi_analytics
+      DB_USER: finkashi
+      DB_PASSWORD: finkashi_dev
+    networks:
+      - finkashi_net
+
+  # ---------------------------------------------------------------
+  # Base de données MySQL (proche de la version OVH mutualisé)
+  # ---------------------------------------------------------------
+  mysql:
+    image: mysql:8.0
+    container_name: finkashi_mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root_dev
+      MYSQL_DATABASE: finkashi_analytics
+      MYSQL_USER: finkashi
+      MYSQL_PASSWORD: finkashi_dev
+    ports:
+      - "3306:3306"
+    volumes:
+      # Les données persistent entre les redémarrages du conteneur.
+      - finkashi_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - finkashi_net
+
+  # ---------------------------------------------------------------
+  # phpMyAdmin : administration visuelle de la base en dev
+  # Accessible sur http://localhost:8081
+  # ---------------------------------------------------------------
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: finkashi_phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 64M
+    ports:
+      - "8081:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - finkashi_net
+
+volumes:
+  finkashi_db_data:
+
+networks:
+  finkashi_net:
+    driver: bridge

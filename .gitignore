@@ -1,0 +1,29 @@
+# Dependances installees par Composer (regenerees via composer install)
+/vendor/
+
+# Variables d'environnement locales et secrets
+.env
+.env.local
+config/secrets.local.php
+
+# Base de geolocalisation (telechargee, non versionnee)
+/data/*.mmdb
+
+# Archives d'evenements generees a l'execution
+/storage/archives/*
+!/storage/archives/.gitkeep
+
+# Artefacts de tests
+/.phpunit.cache/
+/coverage/
+
+# Fichiers specifiques aux IDE
+/.idea/
+*.iml
+
+# Fichiers systeme
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

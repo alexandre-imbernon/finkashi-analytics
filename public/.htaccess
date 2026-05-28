@@ -1,0 +1,7 @@
+# Routage de toutes les requetes vers le point d'entree unique
+# (sauf fichiers et dossiers existants). Necessaire au front
+# controller, et compatible avec l'hebergement OVH (Apache).
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
