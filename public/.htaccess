@@ -2,6 +2,13 @@
 # (sauf fichiers et dossiers existants). Necessaire au front
 # controller, et compatible avec l'hebergement OVH (Apache).
 RewriteEngine On
+
+# Apache filtre l'en-tete Authorization par defaut. On la repropage
+# explicitement vers PHP pour que l'authentification par cle d'API
+# fonctionne.
+RewriteCond %{HTTP:Authorization} ^(.+)$
+RewriteRule ^ - [E=HTTP_AUTHORIZATION:%1]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [QSA,L]

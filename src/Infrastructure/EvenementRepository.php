@@ -72,6 +72,70 @@ final class EvenementRepository
     }
 
     /**
+     * Compte les evenements anterieurs a une date (utile pour decider
+     * de l'archivage et estimer le poids de la purge).
+     */
+    public function compterAvant(string $jour): int
+    {
+        $requete = $this->pdo->prepare(
+            'SELECT COUNT(*) FROM evenement WHERE DATE(survenu_le) < :jour'
+        );
+        $requete->execute([':jour' => $jour]);
+
+        return (int) $requete->fetchColumn();
+    }
+
+    /**
+     * Recupere les evenements anterieurs a une date, sous forme de
+     * lignes brutes pretes a etre archivees. Volontairement sans
+     * objet pour limiter la consommation memoire sur de gros volumes.
+     *
+     * @return iterable<array{
+     *     id:int, page_id:int, source_id:?int, canal:string,
+     *     pays:?string, visiteur_hash:string, survenu_le:string
+     * }>
+     */
+    public function lireAvant(string $jour): iterable
+    {
+        $requete = $this->pdo->prepare(
+            'SELECT id, page_id, source_id, canal, pays, visiteur_hash, survenu_le
+             FROM evenement
+             WHERE DATE(survenu_le) < :jour
+             ORDER BY survenu_le'
+        );
+        $requete->execute([':jour' => $jour]);
+
+        while (($ligne = $requete->fetch()) !== false) {
+            yield [
+                'id'            => (int) $ligne['id'],
+                'page_id'       => (int) $ligne['page_id'],
+                'source_id'     => $ligne['source_id'] !== null ? (int) $ligne['source_id'] : null,
+                'canal'         => (string) $ligne['canal'],
+                'pays'          => $ligne['pays'] !== null ? (string) $ligne['pays'] : null,
+                'visiteur_hash' => (string) $ligne['visiteur_hash'],
+                'survenu_le'    => (string) $ligne['survenu_le'],
+            ];
+        }
+    }
+
+    /**
+     * Supprime les evenements anterieurs a une date donnee.
+     * Retourne le nombre de lignes effectivement supprimees.
+     *
+     * A n'appeler qu'apres avoir verifie que les donnees ont ete
+     * archivees et que les agregats correspondants existent.
+     */
+    public function supprimerAvant(string $jour): int
+    {
+        $requete = $this->pdo->prepare(
+            'DELETE FROM evenement WHERE DATE(survenu_le) < :jour'
+        );
+        $requete->execute([':jour' => $jour]);
+
+        return $requete->rowCount();
+    }
+
+    /**
      * Agrege les consultations d'un jour par page : pages vues (total)
      * et visiteurs uniques (empreintes distinctes).
      *

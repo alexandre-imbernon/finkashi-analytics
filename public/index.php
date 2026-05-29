@@ -3,43 +3,48 @@
 declare(strict_types=1);
 
 /**
- * Point d'entree unique de l'application (front controller).
+ * Point d'entree unique de l'API (front controller).
  *
- * A ce stade de la Phase 1, ce fichier sert uniquement a verifier
- * que l'atelier Docker fonctionne : PHP repond, et la connexion a
- * MySQL est operationnelle. Le routage reel viendra plus tard.
+ * Toutes les requetes HTTP arrivent ici (grace au .htaccess), sont
+ * routees vers le bon controleur, puis traitees. La configuration
+ * vient de variables d'environnement ; aucun secret n'apparait dans
+ * le code.
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-header('Content-Type: text/plain; charset=utf-8');
+use Finkashi\Analytics\Http\AuthentificationClef;
+use Finkashi\Analytics\Http\ControleurCollecte;
+use Finkashi\Analytics\Http\ControleurStats;
+use Finkashi\Analytics\Http\ReponseJson;
+use Finkashi\Analytics\Http\Routeur;
+use Finkashi\Analytics\Infrastructure\Fabrique;
 
-echo "Finkashi Analytics — verification de l'environnement\n";
-echo "----------------------------------------------------\n";
-echo 'Version de PHP : ' . PHP_VERSION . "\n";
+$config = require __DIR__ . '/../config/config.php';
+$fabrique = new Fabrique($config);
 
-try {
-    $dsn = sprintf(
-        'mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
-        getenv('DB_HOST') ?: 'mysql',
-        getenv('DB_PORT') ?: '3306',
-        getenv('DB_NAME') ?: 'finkashi_analytics'
-    );
+// Construction des controleurs avec leurs dependances.
+$auth = new AuthentificationClef($config['cle_api']);
+$controleurCollecte = new ControleurCollecte($fabrique->serviceCollecte(), $config['domaine_site']);
+$controleurStats    = new ControleurStats($fabrique->statistiqueRepository(), $auth);
 
-    $pdo = new PDO(
-        $dsn,
-        getenv('DB_USER') ?: 'finkashi',
-        getenv('DB_PASSWORD') ?: 'finkashi_dev',
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        ]
-    );
+// Definition des routes.
+$routeur = new Routeur();
 
-    $version = $pdo->query('SELECT VERSION()')->fetchColumn();
-    echo 'Connexion MySQL : OK (serveur ' . $version . ")\n";
-    echo "\nL'atelier est operationnel.\n";
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo 'Connexion MySQL : ECHEC — ' . $e->getMessage() . "\n";
+$routeur->ajouter('POST',    '/collect', fn () => $controleurCollecte->gerer());
+$routeur->ajouter('OPTIONS', '/collect', fn () => $controleurCollecte->gerer());
+
+$routeur->ajouter('GET', '/stats/trafic',  fn () => $controleurStats->trafficGlobal());
+$routeur->ajouter('GET', '/stats/pages',   fn () => $controleurStats->classementPages());
+$routeur->ajouter('GET', '/stats/canaux',  fn () => $controleurStats->repartitionParCanal());
+$routeur->ajouter('GET', '/stats/sources', fn () => $controleurStats->classementSources());
+$routeur->ajouter('GET', '/stats/pays',    fn () => $controleurStats->repartitionParPays());
+
+// Extraction de la methode et du chemin (sans query string).
+$methode = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+$chemin  = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+
+// Dispatch.
+if (!$routeur->dispatcher($methode, $chemin)) {
+    ReponseJson::erreur('Route inconnue.', 404);
 }

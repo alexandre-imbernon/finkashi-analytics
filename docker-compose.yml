@@ -24,6 +24,9 @@ services:
       DB_NAME: finkashi_analytics
       DB_USER: finkashi
       DB_PASSWORD: finkashi_dev
+      APP_API_KEY: "1455e4f03c0bd9a3df30abbc83cb3e8557cb138ffcd9d21bfd2ea4b4193a98ae"
+      APP_SEL_SECRET: "2c3495c45c4249c42bc140eeeb8ab6886ae4357ad5a1d324171096372422e9c8"
+      APP_DOMAINE: "finkashi.fr"
     networks:
       - finkashi_net
 
