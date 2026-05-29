@@ -70,4 +70,109 @@ final class EvenementRepository
 
         return (int) $requete->fetchColumn();
     }
+
+    /**
+     * Agrege les consultations d'un jour par page : pages vues (total)
+     * et visiteurs uniques (empreintes distinctes).
+     *
+     * @return list<array{page_id:int, pages_vues:int, visiteurs:int}>
+     */
+    public function agregerParPage(string $jour): array
+    {
+        $requete = $this->pdo->prepare(
+            'SELECT page_id,
+                    COUNT(*)                     AS pages_vues,
+                    COUNT(DISTINCT visiteur_hash) AS visiteurs
+             FROM evenement
+             WHERE DATE(survenu_le) = :jour
+             GROUP BY page_id'
+        );
+        $requete->execute([':jour' => $jour]);
+
+        return array_map(
+            static fn (array $l): array => [
+                'page_id'    => (int) $l['page_id'],
+                'pages_vues' => (int) $l['pages_vues'],
+                'visiteurs'  => (int) $l['visiteurs'],
+            ],
+            $requete->fetchAll(),
+        );
+    }
+
+    /**
+     * Agrege les visiteurs uniques d'un jour par source.
+     * Les acces directs (source_id NULL) sont exclus.
+     *
+     * @return list<array{source_id:int, visiteurs:int}>
+     */
+    public function agregerParSource(string $jour): array
+    {
+        $requete = $this->pdo->prepare(
+            'SELECT source_id,
+                    COUNT(DISTINCT visiteur_hash) AS visiteurs
+             FROM evenement
+             WHERE DATE(survenu_le) = :jour AND source_id IS NOT NULL
+             GROUP BY source_id'
+        );
+        $requete->execute([':jour' => $jour]);
+
+        return array_map(
+            static fn (array $l): array => [
+                'source_id' => (int) $l['source_id'],
+                'visiteurs' => (int) $l['visiteurs'],
+            ],
+            $requete->fetchAll(),
+        );
+    }
+
+    /**
+     * Agrege les visiteurs uniques d'un jour par canal.
+     *
+     * @return list<array{canal:string, visiteurs:int}>
+     */
+    public function agregerParCanal(string $jour): array
+    {
+        $requete = $this->pdo->prepare(
+            'SELECT canal,
+                    COUNT(DISTINCT visiteur_hash) AS visiteurs
+             FROM evenement
+             WHERE DATE(survenu_le) = :jour
+             GROUP BY canal'
+        );
+        $requete->execute([':jour' => $jour]);
+
+        return array_map(
+            static fn (array $l): array => [
+                'canal'     => (string) $l['canal'],
+                'visiteurs' => (int) $l['visiteurs'],
+            ],
+            $requete->fetchAll(),
+        );
+    }
+
+    /**
+     * Agrege les visiteurs uniques d'un jour par pays.
+     * Les visites sans pays identifie sont exclues.
+     *
+     * @return list<array{pays:string, visiteurs:int}>
+     */
+    public function agregerParPays(string $jour): array
+    {
+        $requete = $this->pdo->prepare(
+            'SELECT pays,
+                    COUNT(DISTINCT visiteur_hash) AS visiteurs
+             FROM evenement
+             WHERE DATE(survenu_le) = :jour AND pays IS NOT NULL
+             GROUP BY pays'
+        );
+        $requete->execute([':jour' => $jour]);
+
+        return array_map(
+            static fn (array $l): array => [
+                'pays'      => (string) $l['pays'],
+                'visiteurs' => (int) $l['visiteurs'],
+            ],
+            $requete->fetchAll(),
+        );
+    }
 }
