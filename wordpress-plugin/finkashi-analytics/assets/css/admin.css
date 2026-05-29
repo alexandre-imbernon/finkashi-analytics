@@ -1,0 +1,109 @@
+/* =====================================================================
+   Feuille de style des ecrans d'admin du plugin Finkashi Analytics.
+   Reprend le style natif de WordPress pour une integration sans rupture.
+   Les classes "wp-*" existantes (wrap, form-table...) sont fournies
+   par WordPress lui-meme : on ne les redefinit pas.
+   ===================================================================== */
+
+.finkashi-wrap {
+    max-width: 1200px;
+}
+
+.finkashi-subtitle {
+    color: #50575e;
+    font-size: 13px;
+    margin: 4px 0 16px;
+}
+
+.finkashi-toolbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.finkashi-toolbar label {
+    font-size: 13px;
+    color: #50575e;
+}
+
+.finkashi-select {
+    padding: 4px 8px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 14px;
+    min-width: 180px;
+}
+
+.finkashi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.finkashi-card,
+.finkashi-card-full {
+    background: #fff;
+    border: 1px solid #dcdcde;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.04);
+}
+
+.finkashi-card {
+    padding: 14px 16px;
+}
+
+.finkashi-card-full {
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.finkashi-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 12px;
+    color: #1d2327;
+}
+
+.finkashi-stat-label {
+    font-size: 12px;
+    color: #50575e;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 6px;
+}
+
+.finkashi-stat-value {
+    font-size: 26px;
+    font-weight: 400;
+    color: #1d2327;
+    line-height: 1.1;
+}
+
+.finkashi-card-placeholder {
+    color: #787c82;
+    font-style: italic;
+    font-size: 13px;
+    text-align: center;
+    padding: 32px 16px;
+    background: #f6f7f7;
+    border: 1px dashed #dcdcde;
+    margin: 0;
+}
+
+.finkashi-two-cols {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 16px;
+}
+
+@media (max-width: 960px) {
+    .finkashi-grid { grid-template-columns: repeat(2, 1fr); }
+    .finkashi-two-cols { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+    .finkashi-grid { grid-template-columns: 1fr; }
+}

@@ -1,8 +1,6 @@
 services:
   # ---------------------------------------------------------------
-  # Service applicatif PHP 8.3 (aligné sur l'hébergement OVH)
-  # Composer est installé dans l'image, ce qui évite toute
-  # installation locale sur le poste Windows.
+  # Service applicatif PHP 8.3 (notre back-end Finkashi Analytics).
   # ---------------------------------------------------------------
   php:
     build:
@@ -10,8 +8,6 @@ services:
       dockerfile: docker/php/Dockerfile
     container_name: finkashi_php
     volumes:
-      # Le code du poste est monté dans le conteneur : toute
-      # modification est immédiatement prise en compte.
       - .:/var/www/html
     ports:
       - "8080:80"
@@ -24,15 +20,12 @@ services:
       DB_NAME: finkashi_analytics
       DB_USER: finkashi
       DB_PASSWORD: finkashi_dev
-      APP_API_KEY: "1455e4f03c0bd9a3df30abbc83cb3e8557cb138ffcd9d21bfd2ea4b4193a98ae"
-      APP_SEL_SECRET: "2c3495c45c4249c42bc140eeeb8ab6886ae4357ad5a1d324171096372422e9c8"
-      APP_DOMAINE: "finkashi.fr"
+      APP_API_KEY: ${APP_API_KEY}
+      APP_SEL_SECRET: ${APP_SEL_SECRET}
+      APP_DOMAINE: ${APP_DOMAINE:-finkashi.fr}
     networks:
       - finkashi_net
 
-  # ---------------------------------------------------------------
-  # Base de données MySQL (proche de la version OVH mutualisé)
-  # ---------------------------------------------------------------
   mysql:
     image: mysql:8.0
     container_name: finkashi_mysql
@@ -45,8 +38,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      # Les données persistent entre les redémarrages du conteneur.
       - finkashi_db_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_dev"]
       interval: 5s
@@ -55,10 +48,6 @@ services:
     networks:
       - finkashi_net
 
-  # ---------------------------------------------------------------
-  # phpMyAdmin : administration visuelle de la base en dev
-  # Accessible sur http://localhost:8081
-  # ---------------------------------------------------------------
   phpmyadmin:
     image: phpmyadmin:latest
     container_name: finkashi_phpmyadmin
@@ -74,8 +63,34 @@ services:
     networks:
       - finkashi_net
 
+  # ---------------------------------------------------------------
+  # WordPress : environnement de developpement du plugin.
+  # Le plugin lui-meme est monte depuis ./wordpress-plugin/, ce qui
+  # permet de le modifier en temps reel depuis le poste.
+  # ---------------------------------------------------------------
+  wordpress:
+    image: wordpress:6.7-php8.3-apache
+    container_name: finkashi_wordpress
+    ports:
+      - "8090:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: finkashi
+      WORDPRESS_DB_PASSWORD: finkashi_dev
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: 1
+    volumes:
+      - finkashi_wp_data:/var/www/html
+      - ./wordpress-plugin/finkashi-analytics:/var/www/html/wp-content/plugins/finkashi-analytics
+    networks:
+      - finkashi_net
+
 volumes:
   finkashi_db_data:
+  finkashi_wp_data:
 
 networks:
   finkashi_net:
