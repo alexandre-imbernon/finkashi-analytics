@@ -1,14 +1,17 @@
-# Routage de toutes les requetes vers le point d'entree unique
-# (sauf fichiers et dossiers existants). Necessaire au front
-# controller, et compatible avec l'hebergement OVH (Apache).
+# =====================================================================
+# .htaccess du dossier public/ : routage vers le front controller.
+# =====================================================================
+
 RewriteEngine On
 
 # Apache filtre l'en-tete Authorization par defaut. On la repropage
 # explicitement vers PHP pour que l'authentification par cle d'API
-# fonctionne.
+# fonctionne (necessaire pour les endpoints /stats/* et /alertes/*).
 RewriteCond %{HTTP:Authorization} ^(.+)$
 RewriteRule ^ - [E=HTTP_AUTHORIZATION:%1]
 
+# Toute requete qui ne correspond pas a un fichier reel est reecrite
+# vers index.php, le front controller de l'application.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [QSA,L]

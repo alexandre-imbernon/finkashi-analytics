@@ -5,54 +5,74 @@ declare(strict_types=1);
 /**
  * Configuration de l'application.
  *
- * Toutes les valeurs sensibles (mots de passe, secrets, cles d'API)
- * proviennent de variables d'environnement. Le code ne contient
- * aucun secret en dur, ce qui permet de versionner le projet sans
- * craindre une fuite.
+ * Strategie a deux niveaux :
+ *  - En developpement (Docker), les valeurs viennent des variables
+ *    d'environnement (chargees depuis .env via docker-compose).
+ *  - En production OVH mutualisee (sans SSH, donc sans env), les
+ *    valeurs viennent d'un fichier secrets.php non versionne, place
+ *    dans le meme dossier. Si ce fichier existe, il prime.
  *
- * Les secrets critiques (cle d'API, sel d'anonymisation) doivent
- * obligatoirement etre definis : l'application refuse de demarrer
- * si l'un d'eux manque, plutot que de retomber sur une valeur par
- * defaut qui constituerait une faille de securite.
+ * Les secrets critiques sont obligatoires : l'application refuse de
+ * demarrer sans, plutot que de retomber sur une valeur par defaut
+ * qui constituerait une faille de securite.
  */
 
+$secrets = [];
+if (is_file(__DIR__ . '/secrets.php')) {
+    $secrets = require __DIR__ . '/secrets.php';
+    if (!is_array($secrets)) {
+        throw new RuntimeException('Le fichier secrets.php doit retourner un tableau.');
+    }
+}
+
 /**
- * Lit une variable d'environnement obligatoire. Leve une exception
- * si elle est absente ou vide.
+ * Lit d'abord dans le fichier secrets, sinon dans l'environnement.
+ * $defaut est utilise uniquement pour les valeurs non sensibles.
  */
-$obligatoire = static function (string $nom): string {
-    $valeur = getenv($nom);
-    if ($valeur === false || trim($valeur) === '') {
+$lire = static function (string $cle, ?string $envVar, ?string $defaut = null) use ($secrets) {
+    if (array_key_exists($cle, $secrets)) {
+        return (string) $secrets[$cle];
+    }
+    if ($envVar !== null) {
+        $valeur = getenv($envVar);
+        if ($valeur !== false && $valeur !== '') {
+            return (string) $valeur;
+        }
+    }
+    return $defaut;
+};
+
+/**
+ * Lit un secret obligatoire. Leve une exception si absent partout.
+ */
+$obligatoire = static function (string $cle, string $envVar) use ($secrets, $lire): string {
+    $valeur = $lire($cle, $envVar);
+    if ($valeur === null || trim($valeur) === '') {
         throw new RuntimeException(
-            "La variable d'environnement {$nom} est obligatoire et doit etre definie."
+            "Le secret '{$cle}' est obligatoire (a definir dans secrets.php ou via la variable d'environnement {$envVar})."
         );
     }
     return $valeur;
 };
 
 return [
-    // Connexion a la base : valeurs par defaut acceptables car
-    // strictement de developpement.
-    'db_host'         => getenv('DB_HOST')         ?: 'mysql',
-    'db_port'         => getenv('DB_PORT')         ?: '3306',
-    'db_name'         => getenv('DB_NAME')         ?: 'finkashi_analytics',
-    'db_user'         => getenv('DB_USER')         ?: 'finkashi',
-    'db_password'     => getenv('DB_PASSWORD')     ?: 'finkashi_dev',
+    'db_host'         => $lire('db_host',     'DB_HOST',     'mysql'),
+    'db_port'         => $lire('db_port',     'DB_PORT',     '3306'),
+    'db_name'         => $lire('db_name',     'DB_NAME',     'finkashi_analytics'),
+    'db_user'         => $lire('db_user',     'DB_USER',     'finkashi'),
+    'db_password'     => $lire('db_password', 'DB_PASSWORD', 'finkashi_dev'),
 
-    // Configuration applicative.
-    'domaine_site'    => getenv('APP_DOMAINE')     ?: 'finkashi.fr',
-    'chemin_base_geo' => getenv('APP_GEOIP_PATH')  ?: __DIR__ . '/../data/GeoLite2-Country.mmdb',
+    'domaine_site'    => $lire('app_domaine',     'APP_DOMAINE',     'finkashi.fr'),
+    'chemin_base_geo' => $lire('app_geoip_path',  'APP_GEOIP_PATH',  __DIR__ . '/../data/GeoLite2-Country.mmdb'),
+    'prefixe_tables'  => $lire('app_prefixe_tables', 'APP_PREFIXE_TABLES', ''),
 
-    // Domaines autorises en CORS pour /collect. La variable
-    // APP_ORIGINES_DEV est facultative et destinee au developpement
-    // local (ex. "localhost:8090"), separee par des virgules. En
-    // production, ne pas la definir.
+    // Domaines autorises en CORS pour /collect.
     'domaines_cors'   => array_values(array_filter(array_merge(
-        [getenv('APP_DOMAINE') ?: 'finkashi.fr'],
-        array_map('trim', explode(',', (string) getenv('APP_ORIGINES_DEV'))),
+        [$lire('app_domaine', 'APP_DOMAINE', 'finkashi.fr')],
+        array_map('trim', explode(',', $lire('app_origines_dev', 'APP_ORIGINES_DEV', '') ?? '')),
     ))),
 
-    // Secrets : OBLIGATOIRES. Aucune valeur par defaut.
-    'sel_secret'      => $obligatoire('APP_SEL_SECRET'),
-    'cle_api'         => $obligatoire('APP_API_KEY'),
+    // Secrets OBLIGATOIRES.
+    'sel_secret'      => $obligatoire('app_sel_secret', 'APP_SEL_SECRET'),
+    'cle_api'         => $obligatoire('app_api_key',    'APP_API_KEY'),
 ];

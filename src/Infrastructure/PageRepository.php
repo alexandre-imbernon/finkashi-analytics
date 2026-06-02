@@ -17,8 +17,10 @@ use PDO;
  */
 final class PageRepository
 {
-    public function __construct(private readonly PDO $pdo)
-    {
+    public function __construct(
+        private readonly PDO $pdo,
+        private readonly string $prefixe = '',
+    ) {
     }
 
     /**
@@ -27,7 +29,7 @@ final class PageRepository
     public function trouverParChemin(string $chemin): ?Page
     {
         $requete = $this->pdo->prepare(
-            'SELECT id, chemin, titre FROM page WHERE chemin = :chemin LIMIT 1'
+            "SELECT id, chemin, titre FROM {$this->prefixe}page WHERE chemin = :chemin LIMIT 1"
         );
         $requete->execute([':chemin' => trim($chemin)]);
 
@@ -45,7 +47,7 @@ final class PageRepository
     public function enregistrer(Page $page): Page
     {
         $requete = $this->pdo->prepare(
-            'INSERT INTO page (chemin, titre) VALUES (:chemin, :titre)'
+            "INSERT INTO {$this->prefixe}page (chemin, titre) VALUES (:chemin, :titre)"
         );
         $requete->execute([
             ':chemin' => $page->chemin(),

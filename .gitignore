@@ -4,6 +4,7 @@
 # Variables d'environnement locales et secrets
 .env
 .env.local
+config/secrets.php
 config/secrets.local.php
 
 # Base de geolocalisation (telechargee, non versionnee)

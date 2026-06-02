@@ -58,12 +58,22 @@ final class Fabrique
         return $this->pdo;
     }
 
+    /**
+     * Prefixe applique a toutes les tables. Permet la cohabitation
+     * avec d'autres applications dans la meme base (cas typique d'un
+     * hebergement mutualise mono-base).
+     */
+    private function prefixe(): string
+    {
+        return $this->config['prefixe_tables'] ?? '';
+    }
+
     public function serviceCollecte(): ServiceCollecte
     {
         return new ServiceCollecte(
-            new PageRepository($this->pdo()),
-            new SourceRepository($this->pdo()),
-            new EvenementRepository($this->pdo()),
+            new PageRepository($this->pdo(), $this->prefixe()),
+            new SourceRepository($this->pdo(), $this->prefixe()),
+            new EvenementRepository($this->pdo(), $this->prefixe()),
             new FournisseurSelQuotidien($this->config['sel_secret']),
             $this->geolocalisateur(),
             $this->config['domaine_site'],
@@ -73,15 +83,15 @@ final class Fabrique
     public function serviceAgregation(): ServiceAgregation
     {
         return new ServiceAgregation(
-            new EvenementRepository($this->pdo()),
-            new StatistiqueRepository($this->pdo()),
+            new EvenementRepository($this->pdo(), $this->prefixe()),
+            new StatistiqueRepository($this->pdo(), $this->prefixe()),
         );
     }
 
     public function serviceDetectionAlerte(): ServiceDetectionAlerte
     {
         return new ServiceDetectionAlerte(
-            new AlerteRepository($this->pdo()),
+            new AlerteRepository($this->pdo(), $this->prefixe()),
             $this->pdo(),
         );
     }
@@ -89,15 +99,15 @@ final class Fabrique
     public function serviceArchivage(): ServiceArchivage
     {
         return new ServiceArchivage(
-            new EvenementRepository($this->pdo()),
-            new ArchiveRepository($this->pdo()),
+            new EvenementRepository($this->pdo(), $this->prefixe()),
+            new ArchiveRepository($this->pdo(), $this->prefixe()),
             $this->config['dossier_archives'] ?? __DIR__ . '/../../storage/archives',
         );
     }
 
     public function statistiqueRepository(): StatistiqueRepository
     {
-        return new StatistiqueRepository($this->pdo());
+        return new StatistiqueRepository($this->pdo(), $this->prefixe());
     }
 
     private function geolocalisateur(): Geolocalisateur

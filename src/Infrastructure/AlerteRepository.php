@@ -17,8 +17,10 @@ use PDO;
  */
 final class AlerteRepository
 {
-    public function __construct(private readonly PDO $pdo)
-    {
+    public function __construct(
+        private readonly PDO $pdo,
+        private readonly string $prefixe = '',
+    ) {
     }
 
     /**
@@ -29,9 +31,9 @@ final class AlerteRepository
     public function reglesActives(): array
     {
         $resultat = $this->pdo->query(
-            'SELECT id, metrique, operateur, seuil, active
-             FROM alerte_regle
-             WHERE active = TRUE'
+            "SELECT id, metrique, operateur, seuil, active
+             FROM {$this->prefixe}alerte_regle
+             WHERE active = TRUE"
         );
 
         return array_map(
@@ -49,9 +51,9 @@ final class AlerteRepository
     public function toutes(): array
     {
         $resultat = $this->pdo->query(
-            'SELECT id, metrique, operateur, seuil, active
-             FROM alerte_regle
-             ORDER BY id'
+            "SELECT id, metrique, operateur, seuil, active
+             FROM {$this->prefixe}alerte_regle
+             ORDER BY id"
         );
 
         return array_map(
@@ -66,9 +68,9 @@ final class AlerteRepository
     public function parId(int $id): ?AlerteRegle
     {
         $requete = $this->pdo->prepare(
-            'SELECT id, metrique, operateur, seuil, active
-             FROM alerte_regle
-             WHERE id = :id'
+            "SELECT id, metrique, operateur, seuil, active
+             FROM {$this->prefixe}alerte_regle
+             WHERE id = :id"
         );
         $requete->execute([':id' => $id]);
         $ligne = $requete->fetch();
@@ -82,8 +84,8 @@ final class AlerteRepository
     public function creer(AlerteRegle $regle): AlerteRegle
     {
         $requete = $this->pdo->prepare(
-            'INSERT INTO alerte_regle (metrique, operateur, seuil, active)
-             VALUES (:metrique, :operateur, :seuil, :active)'
+            "INSERT INTO {$this->prefixe}alerte_regle (metrique, operateur, seuil, active)
+             VALUES (:metrique, :operateur, :seuil, :active)"
         );
         $requete->execute([
             ':metrique'  => $regle->metrique()->value,
@@ -111,12 +113,12 @@ final class AlerteRepository
             return false;
         }
         $requete = $this->pdo->prepare(
-            'UPDATE alerte_regle
+            "UPDATE {$this->prefixe}alerte_regle
                 SET metrique = :metrique,
                     operateur = :operateur,
                     seuil = :seuil,
                     active = :active
-              WHERE id = :id'
+              WHERE id = :id"
         );
         $requete->execute([
             ':id'        => $regle->id(),
@@ -135,7 +137,7 @@ final class AlerteRepository
      */
     public function supprimer(int $id): bool
     {
-        $requete = $this->pdo->prepare('DELETE FROM alerte_regle WHERE id = :id');
+        $requete = $this->pdo->prepare("DELETE FROM {$this->prefixe}alerte_regle WHERE id = :id");
         $requete->execute([':id' => $id]);
 
         return $requete->rowCount() > 0;
@@ -153,13 +155,13 @@ final class AlerteRepository
     public function historique(string $depuis, string $jusque, int $limite = 50): array
     {
         $requete = $this->pdo->prepare(
-            'SELECT d.id, d.regle_id, d.valeur_constatee, d.declenchee_le, d.notifiee,
+            "SELECT d.id, d.regle_id, d.valeur_constatee, d.declenchee_le, d.notifiee,
                     r.metrique, r.operateur, r.seuil
-             FROM alerte_declenchee d
-             JOIN alerte_regle r ON r.id = d.regle_id
+             FROM {$this->prefixe}alerte_declenchee d
+             JOIN {$this->prefixe}alerte_regle r ON r.id = d.regle_id
              WHERE DATE(d.declenchee_le) BETWEEN :depuis AND :jusque
              ORDER BY d.declenchee_le DESC
-             LIMIT :limite'
+             LIMIT :limite"
         );
         $requete->bindValue(':depuis', $depuis);
         $requete->bindValue(':jusque', $jusque);
@@ -190,10 +192,10 @@ final class AlerteRepository
         DateTimeImmutable $instant,
     ): void {
         $requete = $this->pdo->prepare(
-            'INSERT INTO alerte_declenchee
+            "INSERT INTO {$this->prefixe}alerte_declenchee
                 (regle_id, valeur_constatee, declenchee_le, notifiee)
              VALUES
-                (:regle_id, :valeur, :instant, FALSE)'
+                (:regle_id, :valeur, :instant, FALSE)"
         );
         $requete->execute([
             ':regle_id' => $regle->id(),
@@ -209,10 +211,10 @@ final class AlerteRepository
     public function dejaDeclencheeLeJour(AlerteRegle $regle, string $jour): bool
     {
         $requete = $this->pdo->prepare(
-            'SELECT 1 FROM alerte_declenchee
+            "SELECT 1 FROM {$this->prefixe}alerte_declenchee
              WHERE regle_id = :regle_id
                AND DATE(declenchee_le) = :jour
-             LIMIT 1'
+             LIMIT 1"
         );
         $requete->execute([
             ':regle_id' => $regle->id(),

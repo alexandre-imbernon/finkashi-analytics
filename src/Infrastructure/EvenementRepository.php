@@ -15,8 +15,10 @@ use PDO;
  */
 final class EvenementRepository
 {
-    public function __construct(private readonly PDO $pdo)
-    {
+    public function __construct(
+        private readonly PDO $pdo,
+        private readonly string $prefixe = '',
+    ) {
     }
 
     /**
@@ -29,10 +31,10 @@ final class EvenementRepository
     public function enregistrer(Evenement $evenement): Evenement
     {
         $requete = $this->pdo->prepare(
-            'INSERT INTO evenement
+            "INSERT INTO {$this->prefixe}evenement
                 (page_id, source_id, canal, pays, visiteur_hash, survenu_le)
              VALUES
-                (:page_id, :source_id, :canal, :pays, :visiteur_hash, :survenu_le)'
+                (:page_id, :source_id, :canal, :pays, :visiteur_hash, :survenu_le)"
         );
 
         $requete->execute([
@@ -53,7 +55,7 @@ final class EvenementRepository
      */
     public function compter(): int
     {
-        return (int) $this->pdo->query('SELECT COUNT(*) FROM evenement')->fetchColumn();
+        return (int) $this->pdo->query("SELECT COUNT(*) FROM {$this->prefixe}evenement")->fetchColumn();
     }
 
     /**
@@ -63,8 +65,8 @@ final class EvenementRepository
     public function compterVisiteursUniques(string $jour): int
     {
         $requete = $this->pdo->prepare(
-            'SELECT COUNT(DISTINCT visiteur_hash) FROM evenement
-             WHERE DATE(survenu_le) = :jour'
+            "SELECT COUNT(DISTINCT visiteur_hash) FROM {$this->prefixe}evenement
+             WHERE DATE(survenu_le) = :jour"
         );
         $requete->execute([':jour' => $jour]);
 
@@ -78,7 +80,7 @@ final class EvenementRepository
     public function compterAvant(string $jour): int
     {
         $requete = $this->pdo->prepare(
-            'SELECT COUNT(*) FROM evenement WHERE DATE(survenu_le) < :jour'
+            "SELECT COUNT(*) FROM {$this->prefixe}evenement WHERE DATE(survenu_le) < :jour"
         );
         $requete->execute([':jour' => $jour]);
 
@@ -98,10 +100,10 @@ final class EvenementRepository
     public function lireAvant(string $jour): iterable
     {
         $requete = $this->pdo->prepare(
-            'SELECT id, page_id, source_id, canal, pays, visiteur_hash, survenu_le
-             FROM evenement
+            "SELECT id, page_id, source_id, canal, pays, visiteur_hash, survenu_le
+             FROM {$this->prefixe}evenement
              WHERE DATE(survenu_le) < :jour
-             ORDER BY survenu_le'
+             ORDER BY survenu_le"
         );
         $requete->execute([':jour' => $jour]);
 
@@ -128,7 +130,7 @@ final class EvenementRepository
     public function supprimerAvant(string $jour): int
     {
         $requete = $this->pdo->prepare(
-            'DELETE FROM evenement WHERE DATE(survenu_le) < :jour'
+            "DELETE FROM {$this->prefixe}evenement WHERE DATE(survenu_le) < :jour"
         );
         $requete->execute([':jour' => $jour]);
 
@@ -144,12 +146,12 @@ final class EvenementRepository
     public function agregerParPage(string $jour): array
     {
         $requete = $this->pdo->prepare(
-            'SELECT page_id,
+            "SELECT page_id,
                     COUNT(*)                     AS pages_vues,
                     COUNT(DISTINCT visiteur_hash) AS visiteurs
-             FROM evenement
+             FROM {$this->prefixe}evenement
              WHERE DATE(survenu_le) = :jour
-             GROUP BY page_id'
+             GROUP BY page_id"
         );
         $requete->execute([':jour' => $jour]);
 
@@ -172,11 +174,11 @@ final class EvenementRepository
     public function agregerParSource(string $jour): array
     {
         $requete = $this->pdo->prepare(
-            'SELECT source_id,
+            "SELECT source_id,
                     COUNT(DISTINCT visiteur_hash) AS visiteurs
-             FROM evenement
+             FROM {$this->prefixe}evenement
              WHERE DATE(survenu_le) = :jour AND source_id IS NOT NULL
-             GROUP BY source_id'
+             GROUP BY source_id"
         );
         $requete->execute([':jour' => $jour]);
 
@@ -197,11 +199,11 @@ final class EvenementRepository
     public function agregerParCanal(string $jour): array
     {
         $requete = $this->pdo->prepare(
-            'SELECT canal,
+            "SELECT canal,
                     COUNT(DISTINCT visiteur_hash) AS visiteurs
-             FROM evenement
+             FROM {$this->prefixe}evenement
              WHERE DATE(survenu_le) = :jour
-             GROUP BY canal'
+             GROUP BY canal"
         );
         $requete->execute([':jour' => $jour]);
 
@@ -223,11 +225,11 @@ final class EvenementRepository
     public function agregerParPays(string $jour): array
     {
         $requete = $this->pdo->prepare(
-            'SELECT pays,
+            "SELECT pays,
                     COUNT(DISTINCT visiteur_hash) AS visiteurs
-             FROM evenement
+             FROM {$this->prefixe}evenement
              WHERE DATE(survenu_le) = :jour AND pays IS NOT NULL
-             GROUP BY pays'
+             GROUP BY pays"
         );
         $requete->execute([':jour' => $jour]);
 

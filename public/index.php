@@ -29,7 +29,7 @@ $fabrique = new Fabrique($config);
 $auth = new AuthentificationClef($config['cle_api']);
 $controleurCollecte = new ControleurCollecte($fabrique->serviceCollecte(), $config['domaines_cors']);
 $controleurStats    = new ControleurStats($fabrique->statistiqueRepository(), $auth);
-$controleurAlertes  = new ControleurAlertes(new AlerteRepository($fabrique->pdo()), $auth);
+$controleurAlertes  = new ControleurAlertes(new AlerteRepository($fabrique->pdo(), $config['prefixe_tables'] ?? ''), $auth);
 
 // Definition des routes.
 $routeur = new Routeur();

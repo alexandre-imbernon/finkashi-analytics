@@ -12,8 +12,10 @@ use PDO;
  */
 final class ArchiveRepository
 {
-    public function __construct(private readonly PDO $pdo)
-    {
+    public function __construct(
+        private readonly PDO $pdo,
+        private readonly string $prefixe = '',
+    ) {
     }
 
     public function enregistrer(
@@ -23,8 +25,8 @@ final class ArchiveRepository
         int $nbEvenements,
     ): void {
         $requete = $this->pdo->prepare(
-            'INSERT INTO archive (periode_debut, periode_fin, fichier, nb_evenements)
-             VALUES (:debut, :fin, :fichier, :nb)'
+            "INSERT INTO {$this->prefixe}archive (periode_debut, periode_fin, fichier, nb_evenements)
+             VALUES (:debut, :fin, :fichier, :nb)"
         );
         $requete->execute([
             ':debut'   => $periodeDebut,

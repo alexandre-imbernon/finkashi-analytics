@@ -17,14 +17,16 @@ use PDO;
  */
 final class SourceRepository
 {
-    public function __construct(private readonly PDO $pdo)
-    {
+    public function __construct(
+        private readonly PDO $pdo,
+        private readonly string $prefixe = '',
+    ) {
     }
 
     public function trouverParDomaine(string $domaine): ?Source
     {
         $requete = $this->pdo->prepare(
-            'SELECT id, domaine, canal FROM source WHERE domaine = :domaine LIMIT 1'
+            "SELECT id, domaine, canal FROM {$this->prefixe}source WHERE domaine = :domaine LIMIT 1"
         );
         $requete->execute([':domaine' => strtolower(trim($domaine))]);
 
@@ -39,7 +41,7 @@ final class SourceRepository
     public function enregistrer(Source $source): Source
     {
         $requete = $this->pdo->prepare(
-            'INSERT INTO source (domaine, canal) VALUES (:domaine, :canal)'
+            "INSERT INTO {$this->prefixe}source (domaine, canal) VALUES (:domaine, :canal)"
         );
         $requete->execute([
             ':domaine' => $source->domaine(),

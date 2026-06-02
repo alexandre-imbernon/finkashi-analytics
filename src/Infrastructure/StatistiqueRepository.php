@@ -18,18 +18,20 @@ use PDO;
  */
 final class StatistiqueRepository
 {
-    public function __construct(private readonly PDO $pdo)
-    {
+    public function __construct(
+        private readonly PDO $pdo,
+        private readonly string $prefixe = '',
+    ) {
     }
 
     public function enregistrerStatPage(string $jour, int $pageId, int $pagesVues, int $visiteurs): void
     {
         $requete = $this->pdo->prepare(
-            'INSERT INTO stat_jour_page (jour, page_id, pages_vues, visiteurs)
+            "INSERT INTO {$this->prefixe}stat_jour_page (jour, page_id, pages_vues, visiteurs)
              VALUES (:jour, :page_id, :pages_vues, :visiteurs)
              ON DUPLICATE KEY UPDATE
                 pages_vues = VALUES(pages_vues),
-                visiteurs  = VALUES(visiteurs)'
+                visiteurs  = VALUES(visiteurs)"
         );
         $requete->execute([
             ':jour'       => $jour,
@@ -42,9 +44,9 @@ final class StatistiqueRepository
     public function enregistrerStatSource(string $jour, int $sourceId, int $visiteurs): void
     {
         $requete = $this->pdo->prepare(
-            'INSERT INTO stat_jour_source (jour, source_id, visiteurs)
+            "INSERT INTO {$this->prefixe}stat_jour_source (jour, source_id, visiteurs)
              VALUES (:jour, :source_id, :visiteurs)
-             ON DUPLICATE KEY UPDATE visiteurs = VALUES(visiteurs)'
+             ON DUPLICATE KEY UPDATE visiteurs = VALUES(visiteurs)"
         );
         $requete->execute([
             ':jour'      => $jour,
@@ -56,9 +58,9 @@ final class StatistiqueRepository
     public function enregistrerStatCanal(string $jour, string $canal, int $visiteurs): void
     {
         $requete = $this->pdo->prepare(
-            'INSERT INTO stat_jour_canal (jour, canal, visiteurs)
+            "INSERT INTO {$this->prefixe}stat_jour_canal (jour, canal, visiteurs)
              VALUES (:jour, :canal, :visiteurs)
-             ON DUPLICATE KEY UPDATE visiteurs = VALUES(visiteurs)'
+             ON DUPLICATE KEY UPDATE visiteurs = VALUES(visiteurs)"
         );
         $requete->execute([
             ':jour'      => $jour,
@@ -70,9 +72,9 @@ final class StatistiqueRepository
     public function enregistrerStatPays(string $jour, string $pays, int $visiteurs): void
     {
         $requete = $this->pdo->prepare(
-            'INSERT INTO stat_jour_pays (jour, pays, visiteurs)
+            "INSERT INTO {$this->prefixe}stat_jour_pays (jour, pays, visiteurs)
              VALUES (:jour, :pays, :visiteurs)
-             ON DUPLICATE KEY UPDATE visiteurs = VALUES(visiteurs)'
+             ON DUPLICATE KEY UPDATE visiteurs = VALUES(visiteurs)"
         );
         $requete->execute([
             ':jour'      => $jour,
@@ -95,13 +97,13 @@ final class StatistiqueRepository
     public function trafficGlobal(string $depuis, string $jusque): array
     {
         $requete = $this->pdo->prepare(
-            'SELECT jour,
+            "SELECT jour,
                     COALESCE(SUM(visiteurs), 0)  AS visiteurs,
                     COALESCE(SUM(pages_vues), 0) AS pages_vues
-             FROM stat_jour_page
+             FROM {$this->prefixe}stat_jour_page
              WHERE jour BETWEEN :depuis AND :jusque
              GROUP BY jour
-             ORDER BY jour'
+             ORDER BY jour"
         );
         $requete->execute([':depuis' => $depuis, ':jusque' => $jusque]);
 
@@ -123,15 +125,15 @@ final class StatistiqueRepository
     public function classementPages(string $depuis, string $jusque, int $limite = 20): array
     {
         $requete = $this->pdo->prepare(
-            'SELECT p.chemin, p.titre,
+            "SELECT p.chemin, p.titre,
                     COALESCE(SUM(s.visiteurs), 0)  AS visiteurs,
                     COALESCE(SUM(s.pages_vues), 0) AS pages_vues
-             FROM stat_jour_page s
-             JOIN page p ON p.id = s.page_id
+             FROM {$this->prefixe}stat_jour_page s
+             JOIN {$this->prefixe}page p ON p.id = s.page_id
              WHERE s.jour BETWEEN :depuis AND :jusque
              GROUP BY p.id, p.chemin, p.titre
              ORDER BY visiteurs DESC, pages_vues DESC
-             LIMIT :limite'
+             LIMIT :limite"
         );
         $requete->bindValue(':depuis', $depuis);
         $requete->bindValue(':jusque', $jusque);
@@ -157,11 +159,11 @@ final class StatistiqueRepository
     public function repartitionParCanal(string $depuis, string $jusque): array
     {
         $requete = $this->pdo->prepare(
-            'SELECT canal, COALESCE(SUM(visiteurs), 0) AS visiteurs
-             FROM stat_jour_canal
+            "SELECT canal, COALESCE(SUM(visiteurs), 0) AS visiteurs
+             FROM {$this->prefixe}stat_jour_canal
              WHERE jour BETWEEN :depuis AND :jusque
              GROUP BY canal
-             ORDER BY visiteurs DESC'
+             ORDER BY visiteurs DESC"
         );
         $requete->execute([':depuis' => $depuis, ':jusque' => $jusque]);
 
@@ -182,14 +184,14 @@ final class StatistiqueRepository
     public function classementSources(string $depuis, string $jusque, int $limite = 20): array
     {
         $requete = $this->pdo->prepare(
-            'SELECT src.domaine, src.canal,
+            "SELECT src.domaine, src.canal,
                     COALESCE(SUM(s.visiteurs), 0) AS visiteurs
-             FROM stat_jour_source s
-             JOIN source src ON src.id = s.source_id
+             FROM {$this->prefixe}stat_jour_source s
+             JOIN {$this->prefixe}source src ON src.id = s.source_id
              WHERE s.jour BETWEEN :depuis AND :jusque
              GROUP BY src.id, src.domaine, src.canal
              ORDER BY visiteurs DESC
-             LIMIT :limite'
+             LIMIT :limite"
         );
         $requete->bindValue(':depuis', $depuis);
         $requete->bindValue(':jusque', $jusque);
@@ -214,11 +216,11 @@ final class StatistiqueRepository
     public function repartitionParPays(string $depuis, string $jusque): array
     {
         $requete = $this->pdo->prepare(
-            'SELECT pays, COALESCE(SUM(visiteurs), 0) AS visiteurs
-             FROM stat_jour_pays
+            "SELECT pays, COALESCE(SUM(visiteurs), 0) AS visiteurs
+             FROM {$this->prefixe}stat_jour_pays
              WHERE jour BETWEEN :depuis AND :jusque
              GROUP BY pays
-             ORDER BY visiteurs DESC'
+             ORDER BY visiteurs DESC"
         );
         $requete->execute([':depuis' => $depuis, ':jusque' => $jusque]);
 

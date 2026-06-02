@@ -1,0 +1,36 @@
+# =====================================================================
+# .htaccess racine de l'application Finkashi Analytics.
+#
+# Toutes les requetes entrantes (sauf fichiers et dossiers existants
+# a la racine) sont reecrites vers public/index.php, qui est le seul
+# point d'entree de l'application.
+#
+# Cette configuration permet de garder une URL publique propre :
+#   https://finkashi.fr/finkashi-analytics/stats/trafic
+# au lieu de :
+#   https://finkashi.fr/finkashi-analytics/public/stats/trafic
+# =====================================================================
+
+RewriteEngine On
+
+# Apache filtre l'en-tete Authorization par defaut. On la repropage
+# explicitement pour que l'authentification Bearer fonctionne.
+RewriteCond %{HTTP:Authorization} ^(.+)$
+RewriteRule ^ - [E=HTTP_AUTHORIZATION:%1]
+
+# Redirige tout vers public/, sauf si le fichier/dossier existe deja.
+RewriteCond %{REQUEST_URI} !^.*/public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Sans 1.2.3.4 cherche /, redirige aussi vers public/index.php.
+RewriteRule ^$ public/index.php [L]
+
+# Securite : empeche l'execution de PHP en dehors de public/.
+<FilesMatch "\.(php|php3|phtml|php5|php7|php8|phps)$">
+    # Cette regle s'applique aux fichiers PHP a la racine de
+    # l'application (qui ne devraient pas etre executes).
+    # Les fichiers PHP sous public/ ne sont pas concernes.
+    SetHandler default-handler
+</FilesMatch>
