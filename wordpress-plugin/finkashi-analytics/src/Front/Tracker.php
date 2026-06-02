@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Finkashi\Plugin\Public;
+namespace Finkashi\Plugin\Front;
 
 /**
  * Tracker : injecte le script de mesure d'audience dans les pages

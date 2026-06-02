@@ -95,5 +95,21 @@ final class MenuAdmin
             [],
             FINKASHI_PLUGIN_VERSION,
         );
+
+        // Le JS de la page reglages : un vrai fichier, charge en
+        // fin de page (footer), avec donnees serveur injectees via
+        // wp_localize_script.
+        wp_enqueue_script(
+            'finkashi-admin-reglages',
+            FINKASHI_PLUGIN_URL . 'assets/js/reglages.js',
+            [],
+            FINKASHI_PLUGIN_VERSION,
+            true, // charger dans le footer, apres le DOM
+        );
+        wp_localize_script('finkashi-admin-reglages', 'finkashiAdmin', [
+            'ajaxUrl'    => admin_url('admin-ajax.php'),
+            'actionTest' => TestConnexion::ACTION,
+            'nonceTest'  => wp_create_nonce(TestConnexion::ACTION),
+        ]);
     }
 }

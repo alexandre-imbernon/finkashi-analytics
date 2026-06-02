@@ -31,6 +31,7 @@ final class ControleurCollecte
 
     public function gerer(): void
     {
+
         // CORS : autoriser le navigateur du visiteur a appeler l'API.
         $origine = $_SERVER['HTTP_ORIGIN'] ?? '';
         if ($origine !== '' && $this->origineAutorisee($origine)) {

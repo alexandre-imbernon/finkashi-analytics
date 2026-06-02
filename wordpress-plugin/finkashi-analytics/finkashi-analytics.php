@@ -34,8 +34,8 @@ spl_autoload_register(static function (string $classe): void {
         return;
     }
     $chemin = FINKASHI_PLUGIN_DIR . 'src/'
-            . str_replace('\\', '/', substr($classe, strlen($prefixe)))
-            . '.php';
+        . str_replace('\\', '/', substr($classe, strlen($prefixe)))
+        . '.php';
     if (is_file($chemin)) {
         require_once $chemin;
     }

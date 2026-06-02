@@ -107,3 +107,24 @@
 @media (max-width: 600px) {
     .finkashi-grid { grid-template-columns: 1fr; }
 }
+
+/* Resultat du bouton "Tester la connexion" */
+.finkashi-test-resultat {
+    display: inline-block;
+    margin-left: 12px;
+    padding: 4px 10px;
+    font-size: 13px;
+    border-radius: 3px;
+}
+.finkashi-test-resultat.en-cours {
+    background: #f0f0f1;
+    color: #50575e;
+}
+.finkashi-test-resultat.succes {
+    background: #edfaef;
+    color: #00701a;
+}
+.finkashi-test-resultat.echec {
+    background: #fcf0f1;
+    color: #b32d2e;
+}
