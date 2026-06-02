@@ -43,6 +43,15 @@ return [
     'domaine_site'    => getenv('APP_DOMAINE')     ?: 'finkashi.fr',
     'chemin_base_geo' => getenv('APP_GEOIP_PATH')  ?: __DIR__ . '/../data/GeoLite2-Country.mmdb',
 
+    // Domaines autorises en CORS pour /collect. La variable
+    // APP_ORIGINES_DEV est facultative et destinee au developpement
+    // local (ex. "localhost:8090"), separee par des virgules. En
+    // production, ne pas la definir.
+    'domaines_cors'   => array_values(array_filter(array_merge(
+        [getenv('APP_DOMAINE') ?: 'finkashi.fr'],
+        array_map('trim', explode(',', (string) getenv('APP_ORIGINES_DEV'))),
+    ))),
+
     // Secrets : OBLIGATOIRES. Aucune valeur par defaut.
     'sel_secret'      => $obligatoire('APP_SEL_SECRET'),
     'cle_api'         => $obligatoire('APP_API_KEY'),

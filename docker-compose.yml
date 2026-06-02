@@ -23,6 +23,7 @@ services:
       APP_API_KEY: ${APP_API_KEY}
       APP_SEL_SECRET: ${APP_SEL_SECRET}
       APP_DOMAINE: ${APP_DOMAINE:-finkashi.fr}
+      APP_ORIGINES_DEV: ${APP_ORIGINES_DEV:-}
     networks:
       - finkashi_net
 

@@ -23,6 +23,7 @@ final class Installation
     {
         return [
             'url_service'       => '',
+            'url_publique'      => '',
             'cle_api'           => '',
             'domaine_site'      => '',
             'tracker_actif'     => true,

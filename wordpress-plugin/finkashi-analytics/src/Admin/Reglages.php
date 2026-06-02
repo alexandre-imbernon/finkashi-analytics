@@ -53,9 +53,10 @@ final class Reglages
             page:     'finkashi-reglages',
         );
 
-        $this->ajouterChamp('url_service', 'URL du service', 'champUrlService', 'finkashi_section_connexion');
-        $this->ajouterChamp('cle_api',     'Cle d\'API',     'champCleApi',     'finkashi_section_connexion');
-        $this->ajouterChamp('domaine_site', 'Domaine du site', 'champDomaineSite', 'finkashi_section_connexion');
+        $this->ajouterChamp('url_service',  'URL du service (interne)', 'champUrlService',  'finkashi_section_connexion');
+        $this->ajouterChamp('url_publique', 'URL du service (publique)', 'champUrlPublique', 'finkashi_section_connexion');
+        $this->ajouterChamp('cle_api',      'Cle d\'API',                'champCleApi',      'finkashi_section_connexion');
+        $this->ajouterChamp('domaine_site', 'Domaine du site',           'champDomaineSite', 'finkashi_section_connexion');
 
         // --- Section : Suivi des visites -------------------------------
         add_settings_section(
@@ -97,8 +98,21 @@ final class Reglages
         $valeur = $this->valeur('url_service');
         $name = $this->name('url_service');
         echo '<input type="url" id="finkashi_url_service" name="' . esc_attr($name) . '" '
-            . 'value="' . esc_attr($valeur) . '" class="regular-text" placeholder="https://analytics.exemple.fr">';
-        echo '<p class="description">URL publique de votre back-end. HTTPS recommande en production.</p>';
+           . 'value="' . esc_attr($valeur) . '" class="regular-text" placeholder="https://analytics.exemple.fr">';
+        echo '<p class="description">URL utilisee par WordPress pour appeler l\'API en server-to-server '
+           . '(test de connexion, dashboard). En production, c\'est la meme que l\'URL publique. '
+           . 'En dev Docker, ce sera un nom de service interne (ex. http://php).</p>';
+    }
+
+    public function champUrlPublique(): void
+    {
+        $valeur = $this->valeur('url_publique');
+        $name = $this->name('url_publique');
+        echo '<input type="url" id="finkashi_url_publique" name="' . esc_attr($name) . '" '
+           . 'value="' . esc_attr($valeur) . '" class="regular-text" placeholder="https://analytics.exemple.fr">';
+        echo '<p class="description">URL utilisee par le tracker JavaScript depuis le navigateur du visiteur. '
+           . 'En production, identique a l\'URL interne. En dev Docker, c\'est l\'URL exposee sur l\'hote '
+           . '(ex. http://localhost:8080).</p>';
     }
 
     public function champCleApi(): void
@@ -109,7 +123,7 @@ final class Reglages
         // reste lisible cote serveur (pas de chiffrement, juste de
         // l'affichage discret).
         echo '<input type="password" id="finkashi_cle_api" name="' . esc_attr($name) . '" '
-            . 'value="' . esc_attr($valeur) . '" class="regular-text" autocomplete="off">';
+           . 'value="' . esc_attr($valeur) . '" class="regular-text" autocomplete="off">';
         echo '<p class="description">Cle secrete partagee avec le service (header Authorization: Bearer).</p>';
     }
 
@@ -118,7 +132,7 @@ final class Reglages
         $valeur = $this->valeur('domaine_site');
         $name = $this->name('domaine_site');
         echo '<input type="text" id="finkashi_domaine_site" name="' . esc_attr($name) . '" '
-            . 'value="' . esc_attr($valeur) . '" class="regular-text" placeholder="exemple.fr">';
+           . 'value="' . esc_attr($valeur) . '" class="regular-text" placeholder="exemple.fr">';
         echo '<p class="description">Domaine surveille, sans le protocole.</p>';
     }
 
@@ -127,8 +141,8 @@ final class Reglages
         $coche = (bool) $this->valeur('tracker_actif');
         $name = $this->name('tracker_actif');
         echo '<label><input type="checkbox" id="finkashi_tracker_actif" name="' . esc_attr($name) . '" '
-            . 'value="1" ' . checked($coche, true, false) . '> '
-            . 'Injecter le script de mesure dans les pages publiques</label>';
+           . 'value="1" ' . checked($coche, true, false) . '> '
+           . 'Injecter le script de mesure dans les pages publiques</label>';
         echo '<p class="description">Decochez pour suspendre la collecte sans desinstaller le plugin.</p>';
     }
 
@@ -137,8 +151,8 @@ final class Reglages
         $coche = (bool) $this->valeur('exclure_admins');
         $name = $this->name('exclure_admins');
         echo '<label><input type="checkbox" id="finkashi_exclure_admins" name="' . esc_attr($name) . '" '
-            . 'value="1" ' . checked($coche, true, false) . '> '
-            . 'Ne pas mesurer les visites des administrateurs connectes</label>';
+           . 'value="1" ' . checked($coche, true, false) . '> '
+           . 'Ne pas mesurer les visites des administrateurs connectes</label>';
     }
 
     public function champPagesExclues(): void
@@ -146,10 +160,10 @@ final class Reglages
         $valeur = $this->valeur('pages_exclues');
         $name = $this->name('pages_exclues');
         echo '<textarea id="finkashi_pages_exclues" name="' . esc_attr($name) . '" '
-            . 'rows="3" class="large-text" placeholder="/admin/&#10;/preview/">'
-            . esc_textarea($valeur) . '</textarea>';
+           . 'rows="3" class="large-text" placeholder="/admin/&#10;/preview/">'
+           . esc_textarea($valeur) . '</textarea>';
         echo '<p class="description">Un prefixe d\'URL par ligne. Les pages dont le chemin commence par '
-            . 'l\'un de ces prefixes ne sont pas mesurees.</p>';
+           . 'l\'un de ces prefixes ne sont pas mesurees.</p>';
     }
 
     // -----------------------------------------------------------------
@@ -184,7 +198,23 @@ final class Reglages
                 add_settings_error(
                     Installation::OPTION_REGLAGES,
                     'url_invalide',
-                    'L\'URL du service est invalide. Elle doit ressembler a https://exemple.fr.',
+                    'L\'URL du service (interne) est invalide. Elle doit ressembler a https://exemple.fr.',
+                );
+            }
+        }
+
+        // URL publique : meme regle.
+        if (isset($brut['url_publique'])) {
+            $url = trim((string) $brut['url_publique']);
+            if ($url === '') {
+                $propre['url_publique'] = '';
+            } elseif (filter_var($url, FILTER_VALIDATE_URL) !== false) {
+                $propre['url_publique'] = rtrim($url, '/');
+            } else {
+                add_settings_error(
+                    Installation::OPTION_REGLAGES,
+                    'url_publique_invalide',
+                    'L\'URL publique est invalide. Elle doit ressembler a https://exemple.fr.',
                 );
             }
         }

@@ -25,7 +25,7 @@ $fabrique = new Fabrique($config);
 
 // Construction des controleurs avec leurs dependances.
 $auth = new AuthentificationClef($config['cle_api']);
-$controleurCollecte = new ControleurCollecte($fabrique->serviceCollecte(), $config['domaine_site']);
+$controleurCollecte = new ControleurCollecte($fabrique->serviceCollecte(), $config['domaines_cors']);
 $controleurStats    = new ControleurStats($fabrique->statistiqueRepository(), $auth);
 
 // Definition des routes.

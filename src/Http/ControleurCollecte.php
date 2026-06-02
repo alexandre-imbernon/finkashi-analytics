@@ -23,15 +23,17 @@ use Throwable;
  */
 final class ControleurCollecte
 {
+    /**
+     * @param list<string> $domainesAutorises Domaines accept\u00e9s en CORS (sans protocole, sans www).
+     */
     public function __construct(
         private readonly ServiceCollecte $service,
-        private readonly string $domaineSite,
+        private readonly array $domainesAutorises,
     ) {
     }
 
     public function gerer(): void
     {
-
         // CORS : autoriser le navigateur du visiteur a appeler l'API.
         $origine = $_SERVER['HTTP_ORIGIN'] ?? '';
         if ($origine !== '' && $this->origineAutorisee($origine)) {
@@ -85,11 +87,25 @@ final class ControleurCollecte
 
     private function origineAutorisee(string $origine): bool
     {
-        // L'origine doit correspondre au domaine du site (avec ou sans www).
+        // Pour les origines avec port (typique en dev : localhost:8090),
+        // on compare l'hote complet (host:port). Sinon, on enleve "www."
+        // pour tolerer les deux formes.
         $hote = parse_url($origine, PHP_URL_HOST) ?? '';
-        $hote = preg_replace('/^www\./', '', strtolower($hote));
+        $port = parse_url($origine, PHP_URL_PORT);
+        $hote = strtolower($hote);
+        $hoteAvecPort = $port !== null ? $hote . ':' . $port : $hote;
+        $hoteSansWww  = preg_replace('/^www\./', '', $hote);
 
-        return $hote === $this->domaineSite;
+        foreach ($this->domainesAutorises as $autorise) {
+            $autorise = strtolower(trim($autorise));
+            if ($autorise === '') {
+                continue;
+            }
+            if ($autorise === $hoteSansWww || $autorise === $hote || $autorise === $hoteAvecPort) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private function extraireDomaine(mixed $referentBrut): ?string
