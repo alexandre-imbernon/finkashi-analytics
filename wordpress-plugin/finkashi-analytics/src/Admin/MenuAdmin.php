@@ -86,6 +86,8 @@ final class MenuAdmin
             $this->chargerAssetsReglages();
         } elseif ($hook === self::HOOK_DASHBOARD) {
             $this->chargerAssetsDashboard();
+        } elseif ($hook === self::HOOK_ALERTES) {
+            $this->chargerAssetsAlertes();
         }
     }
 
@@ -127,6 +129,22 @@ final class MenuAdmin
             'actionProxy' => ProxyApi::ACTION,
             'nonceProxy'  => wp_create_nonce(ProxyApi::ACTION),
             'urlReglages' => admin_url('admin.php?page=finkashi-reglages'),
+        ]);
+    }
+
+    private function chargerAssetsAlertes(): void
+    {
+        wp_enqueue_script(
+            'finkashi-admin-alertes',
+            FINKASHI_PLUGIN_URL . 'assets/js/alertes.js',
+            [],
+            FINKASHI_PLUGIN_VERSION,
+            true,
+        );
+        wp_localize_script('finkashi-admin-alertes', 'finkashiAlertes', [
+            'ajaxUrl'     => admin_url('admin-ajax.php'),
+            'actionProxy' => ProxyApi::ACTION,
+            'nonceProxy'  => wp_create_nonce(ProxyApi::ACTION),
         ]);
     }
 }

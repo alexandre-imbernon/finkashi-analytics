@@ -173,3 +173,85 @@
     opacity: 0.5;
     pointer-events: none;
 }
+
+/* =====================================================================
+   Alertes : badges, actions, modale
+   ===================================================================== */
+
+.finkashi-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+.finkashi-badge.badge-actif   { background: #edfaef; color: #00701a; }
+.finkashi-badge.badge-inactif { background: #f0f0f1; color: #50575e; }
+
+.finkashi-table .actions {
+    white-space: nowrap;
+    font-size: 12px;
+}
+.finkashi-table .actions .button-link {
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+    border: none;
+    color: #2271b1;
+    font-size: 12px;
+}
+.finkashi-table .actions .button-link:hover {
+    color: #135e96;
+    text-decoration: underline;
+}
+.finkashi-table .actions .finkashi-supprimer {
+    color: #b32d2e;
+}
+.finkashi-table .actions .finkashi-supprimer:hover {
+    color: #8a1f20;
+}
+
+.finkashi-condition {
+    color: #787c82;
+    font-size: 12px;
+}
+
+/* Modale */
+.finkashi-modale {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.finkashi-modale-fond {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+.finkashi-modale-corps {
+    position: relative;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    padding: 24px;
+    max-width: 520px;
+    width: 100%;
+}
+.finkashi-modale-corps h2 {
+    margin-top: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+.finkashi-modale-actions {
+    text-align: right;
+    margin-bottom: 0;
+}
+.finkashi-modale-actions .button {
+    margin-left: 8px;
+}

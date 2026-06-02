@@ -14,10 +14,12 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Finkashi\Analytics\Http\AuthentificationClef;
+use Finkashi\Analytics\Http\ControleurAlertes;
 use Finkashi\Analytics\Http\ControleurCollecte;
 use Finkashi\Analytics\Http\ControleurStats;
 use Finkashi\Analytics\Http\ReponseJson;
 use Finkashi\Analytics\Http\Routeur;
+use Finkashi\Analytics\Infrastructure\AlerteRepository;
 use Finkashi\Analytics\Infrastructure\Fabrique;
 
 $config = require __DIR__ . '/../config/config.php';
@@ -27,6 +29,7 @@ $fabrique = new Fabrique($config);
 $auth = new AuthentificationClef($config['cle_api']);
 $controleurCollecte = new ControleurCollecte($fabrique->serviceCollecte(), $config['domaines_cors']);
 $controleurStats    = new ControleurStats($fabrique->statistiqueRepository(), $auth);
+$controleurAlertes  = new ControleurAlertes(new AlerteRepository($fabrique->pdo()), $auth);
 
 // Definition des routes.
 $routeur = new Routeur();
@@ -39,6 +42,12 @@ $routeur->ajouter('GET', '/stats/pages',   fn () => $controleurStats->classement
 $routeur->ajouter('GET', '/stats/canaux',  fn () => $controleurStats->repartitionParCanal());
 $routeur->ajouter('GET', '/stats/sources', fn () => $controleurStats->classementSources());
 $routeur->ajouter('GET', '/stats/pays',    fn () => $controleurStats->repartitionParPays());
+
+$routeur->ajouter('GET',    '/alertes/regles',     fn ()      => $controleurAlertes->lister());
+$routeur->ajouter('POST',   '/alertes/regles',     fn ()      => $controleurAlertes->creer());
+$routeur->ajouter('PUT',    '/alertes/regles/:id', fn (array $p) => $controleurAlertes->modifier($p));
+$routeur->ajouter('DELETE', '/alertes/regles/:id', fn (array $p) => $controleurAlertes->supprimer($p));
+$routeur->ajouter('GET',    '/alertes/historique', fn ()      => $controleurAlertes->historique());
 
 // Extraction de la methode et du chemin (sans query string).
 $methode = $_SERVER['REQUEST_METHOD'] ?? 'GET';
