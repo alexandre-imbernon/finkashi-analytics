@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Finkashi\Plugin;
 
 use Finkashi\Plugin\Admin\MenuAdmin;
+use Finkashi\Plugin\Admin\ProxyApi;
 use Finkashi\Plugin\Admin\Reglages;
 use Finkashi\Plugin\Admin\TestConnexion;
 use Finkashi\Plugin\Front\Tracker;
@@ -23,6 +24,7 @@ final class Plugin
             (new MenuAdmin())->enregistrer();
             (new Reglages())->enregistrer();
             (new TestConnexion())->enregistrer();
+            (new ProxyApi())->enregistrer();
         }
 
         (new Tracker())->enregistrer();

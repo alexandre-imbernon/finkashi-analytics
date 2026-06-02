@@ -128,3 +128,48 @@
     background: #fcf0f1;
     color: #b32d2e;
 }
+
+/* =====================================================================
+   Dashboard : conteneurs de graphes et tableaux
+   ===================================================================== */
+
+.finkashi-canvas-wrap {
+    position: relative;
+    height: 260px;
+}
+.finkashi-canvas-wrap.canvas-donut {
+    height: 200px;
+}
+
+.finkashi-table {
+    margin-top: 0;
+}
+.finkashi-table th,
+.finkashi-table td {
+    font-size: 13px;
+}
+.finkashi-table td.num,
+.finkashi-table th.num {
+    text-align: right;
+    white-space: nowrap;
+}
+.finkashi-chemin {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 11px;
+    color: #2271b1;
+    margin-top: 2px;
+}
+.finkashi-vide {
+    text-align: center;
+    color: #787c82;
+    font-style: italic;
+    padding: 20px !important;
+}
+
+#finkashi-dashboard-zone {
+    transition: opacity 0.2s;
+}
+#finkashi-dashboard-zone.chargement {
+    opacity: 0.5;
+    pointer-events: none;
+}

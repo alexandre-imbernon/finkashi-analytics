@@ -16,20 +16,18 @@ namespace Finkashi\Plugin\Admin;
  */
 final class MenuAdmin
 {
+    private const HOOK_DASHBOARD = 'toplevel_page_finkashi';
+    private const HOOK_ALERTES   = 'finkashi_page_finkashi-alertes';
+    private const HOOK_REGLAGES  = 'finkashi_page_finkashi-reglages';
+
     public function enregistrer(): void
     {
         add_action('admin_menu', [$this, 'declarerMenus']);
         add_action('admin_enqueue_scripts', [$this, 'chargerAssets']);
     }
 
-    /**
-     * Appele par WordPress au moment d'assembler le menu d'admin.
-     * On y declare le menu principal et ses sous-entrees.
-     */
     public function declarerMenus(): void
     {
-        // Menu principal. Le 5e parametre (slug) sera le 1er sous-menu
-        // par defaut : c'est le Dashboard.
         add_menu_page(
             page_title: 'Finkashi Analytics',
             menu_title: 'Finkashi',
@@ -40,8 +38,6 @@ final class MenuAdmin
             position:   30,
         );
 
-        // Le premier sous-menu reprend le slug du menu principal :
-        // c'est ce qui permet de renommer son intitule en "Dashboard".
         add_submenu_page(
             parent_slug: 'finkashi',
             page_title:  'Dashboard',
@@ -70,25 +66,14 @@ final class MenuAdmin
         );
     }
 
-    /**
-     * Charge les feuilles de style et scripts uniquement sur les
-     * pages du plugin (eviter de polluer le reste de l'admin).
-     */
     public function chargerAssets(string $hook): void
     {
-        // Les hooks generes par add_menu_page suivent la convention
-        // "toplevel_page_<slug>" pour le menu principal et
-        // "<slug-parent>_page_<slug-enfant>" pour les sous-menus.
-        $hooksPlugin = [
-            'toplevel_page_finkashi',
-            'finkashi_page_finkashi-alertes',
-            'finkashi_page_finkashi-reglages',
-        ];
-
+        $hooksPlugin = [self::HOOK_DASHBOARD, self::HOOK_ALERTES, self::HOOK_REGLAGES];
         if (!in_array($hook, $hooksPlugin, true)) {
             return;
         }
 
+        // CSS commun a tous les ecrans du plugin.
         wp_enqueue_style(
             'finkashi-admin',
             FINKASHI_PLUGIN_URL . 'assets/css/admin.css',
@@ -96,20 +81,52 @@ final class MenuAdmin
             FINKASHI_PLUGIN_VERSION,
         );
 
-        // Le JS de la page reglages : un vrai fichier, charge en
-        // fin de page (footer), avec donnees serveur injectees via
-        // wp_localize_script.
+        // JS specifique a chaque page.
+        if ($hook === self::HOOK_REGLAGES) {
+            $this->chargerAssetsReglages();
+        } elseif ($hook === self::HOOK_DASHBOARD) {
+            $this->chargerAssetsDashboard();
+        }
+    }
+
+    private function chargerAssetsReglages(): void
+    {
         wp_enqueue_script(
             'finkashi-admin-reglages',
             FINKASHI_PLUGIN_URL . 'assets/js/reglages.js',
             [],
             FINKASHI_PLUGIN_VERSION,
-            true, // charger dans le footer, apres le DOM
+            true,
         );
         wp_localize_script('finkashi-admin-reglages', 'finkashiAdmin', [
             'ajaxUrl'    => admin_url('admin-ajax.php'),
             'actionTest' => TestConnexion::ACTION,
             'nonceTest'  => wp_create_nonce(TestConnexion::ACTION),
+        ]);
+    }
+
+    private function chargerAssetsDashboard(): void
+    {
+        // Chart.js d'abord, puis notre script qui en depend.
+        wp_enqueue_script(
+            'finkashi-chartjs',
+            FINKASHI_PLUGIN_URL . 'assets/js/vendor/chart.umd.min.js',
+            [],
+            '4.4.7',
+            true,
+        );
+        wp_enqueue_script(
+            'finkashi-admin-dashboard',
+            FINKASHI_PLUGIN_URL . 'assets/js/dashboard.js',
+            ['finkashi-chartjs'],
+            FINKASHI_PLUGIN_VERSION,
+            true,
+        );
+        wp_localize_script('finkashi-admin-dashboard', 'finkashiDashboard', [
+            'ajaxUrl'     => admin_url('admin-ajax.php'),
+            'actionProxy' => ProxyApi::ACTION,
+            'nonceProxy'  => wp_create_nonce(ProxyApi::ACTION),
+            'urlReglages' => admin_url('admin.php?page=finkashi-reglages'),
         ]);
     }
 }
