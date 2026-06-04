@@ -11,6 +11,9 @@
 #   https://finkashi.fr/finkashi-analytics/public/stats/trafic
 # =====================================================================
 
+# Active le moteur PHP 8.3 d'OVH pour les fichiers .php de ce dossier.
+AddHandler application/x-httpd-php83 .php
+
 RewriteEngine On
 
 # Apache filtre l'en-tete Authorization par defaut. On la repropage
@@ -24,13 +27,5 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ public/$1 [L]
 
-# Sans 1.2.3.4 cherche /, redirige aussi vers public/index.php.
+# Pour la requete racine "/" exactement.
 RewriteRule ^$ public/index.php [L]
-
-# Securite : empeche l'execution de PHP en dehors de public/.
-<FilesMatch "\.(php|php3|phtml|php5|php7|php8|phps)$">
-    # Cette regle s'applique aux fichiers PHP a la racine de
-    # l'application (qui ne devraient pas etre executes).
-    # Les fichiers PHP sous public/ ne sont pas concernes.
-    SetHandler default-handler
-</FilesMatch>

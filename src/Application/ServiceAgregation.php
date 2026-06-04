@@ -31,12 +31,19 @@ final class ServiceAgregation
      * Calcule et enregistre tous les agregats d'une journee.
      *
      * @param string $jour Date au format 'Y-m-d'.
-     * @return array{pages:int, sources:int, canaux:int, pays:int}
+     * @return array{pages:int, sources:int, canaux:int, pays:int, global:int}
      *         Nombre d'agregats ecrits par axe (utile pour le suivi).
      */
     public function agregerJour(string $jour): array
     {
-        $compteurs = ['pages' => 0, 'sources' => 0, 'canaux' => 0, 'pays' => 0];
+        $compteurs = ['pages' => 0, 'sources' => 0, 'canaux' => 0, 'pays' => 0, 'global' => 0];
+
+        // Agregation globale du jour : visiteurs uniques (tout axe
+        // confondu) et pages vues totales. Doit etre faite en premier
+        // car c'est la source de verite pour les KPI du dashboard.
+        $global = $this->evenements->agregerGlobal($jour);
+        $this->statistiques->enregistrerStatGlobal($jour, $global['visiteurs'], $global['pages_vues']);
+        $compteurs['global'] = 1;
 
         foreach ($this->evenements->agregerParPage($jour) as $ligne) {
             $this->statistiques->enregistrerStatPage(

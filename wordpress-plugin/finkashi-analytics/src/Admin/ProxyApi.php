@@ -93,11 +93,15 @@ final class ProxyApi
         $cible = rtrim($url, '/') . $chemin;
 
         // 5. Pour GET : query string. Pour POST/PUT : corps JSON.
+        // On envoie la cle de deux facons : "Authorization: Bearer"
+        // (standard) et "X-Api-Key" (fallback pour les hebergeurs
+        // mutualises qui filtrent Authorization).
         $arguments = [
             'timeout' => 10,
             'method'  => $methode,
             'headers' => [
                 'Authorization' => 'Bearer ' . $cle,
+                'X-Api-Key'     => $cle,
                 'Accept'        => 'application/json',
             ],
         ];

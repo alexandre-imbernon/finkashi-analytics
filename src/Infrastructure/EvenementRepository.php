@@ -166,6 +166,31 @@ final class EvenementRepository
     }
 
     /**
+     * Agrege le trafic d'une journee : visiteurs uniques et pages vues
+     * sans regroupement par axe. C'est le calcul de reference pour le
+     * KPI global, qu'on ne peut pas obtenir en sommant les axes (un
+     * visiteur peut apparaitre dans plusieurs canaux ou pages).
+     *
+     * @return array{visiteurs:int, pages_vues:int}
+     */
+    public function agregerGlobal(string $jour): array
+    {
+        $requete = $this->pdo->prepare(
+            "SELECT COUNT(DISTINCT visiteur_hash) AS visiteurs,
+                    COUNT(*)                     AS pages_vues
+             FROM {$this->prefixe}evenement
+             WHERE DATE(survenu_le) = :jour"
+        );
+        $requete->execute([':jour' => $jour]);
+        $l = $requete->fetch();
+
+        return [
+            'visiteurs'  => $l ? (int) $l['visiteurs']  : 0,
+            'pages_vues' => $l ? (int) $l['pages_vues'] : 0,
+        ];
+    }
+
+    /**
      * Agrege les visiteurs uniques d'un jour par source.
      * Les acces directs (source_id NULL) sont exclus.
      *

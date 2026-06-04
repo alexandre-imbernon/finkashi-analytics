@@ -22,6 +22,7 @@ final class ServiceDetectionAlerte
     public function __construct(
         private readonly AlerteRepository $alertes,
         private readonly PDO $pdo,
+        private readonly string $prefixe = '',
     ) {
     }
 
@@ -65,13 +66,13 @@ final class ServiceDetectionAlerte
             // Visiteurs uniques du jour = somme des visiteurs par canal,
             // car les canaux partitionnent les visiteurs (un visiteur a
             // un seul canal de provenance).
-            Metrique::VisiteursJour => 'SELECT COALESCE(SUM(visiteurs), 0)
-                                        FROM stat_jour_canal
-                                        WHERE jour = :jour',
+            Metrique::VisiteursJour => "SELECT COALESCE(SUM(visiteurs), 0)
+                                        FROM {$this->prefixe}stat_jour_canal
+                                        WHERE jour = :jour",
             // Pages vues du jour = somme sur stat_jour_page.
-            Metrique::PagesVuesJour => 'SELECT COALESCE(SUM(pages_vues), 0)
-                                        FROM stat_jour_page
-                                        WHERE jour = :jour',
+            Metrique::PagesVuesJour => "SELECT COALESCE(SUM(pages_vues), 0)
+                                        FROM {$this->prefixe}stat_jour_page
+                                        WHERE jour = :jour",
         };
 
         $stmt = $this->pdo->prepare($requete);

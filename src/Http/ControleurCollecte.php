@@ -121,12 +121,15 @@ final class ControleurCollecte
 
     private function ipDuVisiteur(): string
     {
-        // En production derriere un reverse-proxy, prendre X-Forwarded-For.
+        // En production derriere un reverse-proxy (OVH mutualise),
+        // l'IP reelle du visiteur est dans X-Forwarded-For. L'en-tete
+        // peut contenir une liste d'IPs separees par des virgules,
+        // dans l'ordre client -> proxy_1 -> proxy_2 -> ... Par
+        // convention (RFC 7239), la PREMIERE est celle du client.
         $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '';
 
-        // X-Forwarded-For peut contenir une liste : on prend la premiere.
         if (str_contains($ip, ',')) {
-            $ip = trim(explode(',', $ip)[1] ?? $ip);
+            $ip = trim(explode(',', $ip)[0]);
         }
 
         return $ip !== '' ? $ip : '0.0.0.0';

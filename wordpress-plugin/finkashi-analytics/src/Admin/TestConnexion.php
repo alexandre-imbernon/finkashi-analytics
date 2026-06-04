@@ -61,6 +61,7 @@ final class TestConnexion
             'timeout' => 5,
             'headers' => [
                 'Authorization' => 'Bearer ' . $cle,
+                'X-Api-Key'     => $cle,
                 'Accept'        => 'application/json',
             ],
         ]);

@@ -93,6 +93,7 @@ final class Fabrique
         return new ServiceDetectionAlerte(
             new AlerteRepository($this->pdo(), $this->prefixe()),
             $this->pdo(),
+            $this->prefixe(),
         );
     }
 

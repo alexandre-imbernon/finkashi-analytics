@@ -83,6 +83,29 @@ final class StatistiqueRepository
         ]);
     }
 
+    /**
+     * Enregistre les agregats globaux d'une journee : visiteurs
+     * uniques tout axe confondu et pages vues totales. Cette table
+     * est essentielle pour eviter le double comptage qui surviendrait
+     * en sommant les axes (un visiteur peut etre present sur plusieurs
+     * canaux ou pages, mais ici on le compte une seule fois).
+     */
+    public function enregistrerStatGlobal(string $jour, int $visiteurs, int $pagesVues): void
+    {
+        $requete = $this->pdo->prepare(
+            "INSERT INTO {$this->prefixe}stat_jour_global (jour, visiteurs, pages_vues)
+             VALUES (:jour, :visiteurs, :pages_vues)
+             ON DUPLICATE KEY UPDATE
+                visiteurs  = VALUES(visiteurs),
+                pages_vues = VALUES(pages_vues)"
+        );
+        $requete->execute([
+            ':jour'       => $jour,
+            ':visiteurs'  => $visiteurs,
+            ':pages_vues' => $pagesVues,
+        ]);
+    }
+
     // -------------------------------------------------------------
     // Methodes de lecture, exposees par l'API au dashboard.
     // Bornees par une plage de dates (depuis/jusque) pour permettre
@@ -92,17 +115,22 @@ final class StatistiqueRepository
     /**
      * Trafic global du site, jour par jour, sur une periode donnee.
      *
+    /**
+     * Trafic global par jour : pour chaque jour de la periode, le
+     * nombre de visiteurs uniques et de pages vues, lus directement
+     * dans la table stat_jour_global. Cette table a ete introduite
+     * pour eviter les imprecisions liees a la sommation des axes :
+     * un visiteur peut apparaitre sur plusieurs canaux ou pages,
+     * donc on ne peut pas obtenir le bon total en additionnant.
+     *
      * @return list<array{jour:string, visiteurs:int, pages_vues:int}>
      */
     public function trafficGlobal(string $depuis, string $jusque): array
     {
         $requete = $this->pdo->prepare(
-            "SELECT jour,
-                    COALESCE(SUM(visiteurs), 0)  AS visiteurs,
-                    COALESCE(SUM(pages_vues), 0) AS pages_vues
-             FROM {$this->prefixe}stat_jour_page
+            "SELECT jour, visiteurs, pages_vues
+             FROM {$this->prefixe}stat_jour_global
              WHERE jour BETWEEN :depuis AND :jusque
-             GROUP BY jour
              ORDER BY jour"
         );
         $requete->execute([':depuis' => $depuis, ':jusque' => $jusque]);
