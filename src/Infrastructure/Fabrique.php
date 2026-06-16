@@ -6,10 +6,12 @@ namespace Finkashi\Analytics\Infrastructure;
 
 use Finkashi\Analytics\Application\FournisseurSelQuotidien;
 use Finkashi\Analytics\Application\Geolocalisateur;
+use Finkashi\Analytics\Application\Persistance\ArchiveStockage;
 use Finkashi\Analytics\Application\ServiceAgregation;
 use Finkashi\Analytics\Application\ServiceArchivage;
 use Finkashi\Analytics\Application\ServiceCollecte;
 use Finkashi\Analytics\Application\ServiceDetectionAlerte;
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -25,14 +27,6 @@ final class Fabrique
     private ?PDO $pdo = null;
     private ?Geolocalisateur $geolocalisateur = null;
 
-    /**
-     * @param array{
-     *   db_host:string, db_port:string, db_name:string,
-     *   db_user:string, db_password:string,
-     *   sel_secret:string, domaine_site:string,
-     *   chemin_base_geo:string, cle_api:string
-     * } $config
-     */
     public function __construct(private readonly array $config)
     {
     }
@@ -58,11 +52,6 @@ final class Fabrique
         return $this->pdo;
     }
 
-    /**
-     * Prefixe applique a toutes les tables. Permet la cohabitation
-     * avec d'autres applications dans la meme base (cas typique d'un
-     * hebergement mutualise mono-base).
-     */
     private function prefixe(): string
     {
         return $this->config['prefixe_tables'] ?? '';
@@ -101,9 +90,40 @@ final class Fabrique
     {
         return new ServiceArchivage(
             new EvenementRepository($this->pdo(), $this->prefixe()),
-            new ArchiveRepository($this->pdo(), $this->prefixe()),
+            $this->archiveStockage(),
             $this->config['dossier_archives'] ?? __DIR__ . '/../../storage/archives',
         );
+    }
+
+    /**
+     * Selectionne l'implementation de persistance des archives selon
+     * la configuration. Deux backends sont disponibles :
+     *
+     *  - "mysql" (defaut) : table relationnelle dans la base principale.
+     *    Utilise en production et en developpement standard.
+     *
+     *  - "mongo"          : collection MongoDB. Implementation alternative
+     *    qui demontre la portabilite de l'architecture en couches : seul
+     *    le constructeur change, ServiceArchivage est inchange.
+     *
+     * Le choix est pilote par la variable de config "archive_store".
+     * Si la variable est absente, on retombe sur MySQL pour ne rien
+     * casser de l'existant.
+     */
+    private function archiveStockage(): ArchiveStockage
+    {
+        $backend = strtolower((string) ($this->config['archive_store'] ?? 'mysql'));
+
+        return match ($backend) {
+            'mysql' => new ArchiveRepository($this->pdo(), $this->prefixe()),
+            'mongo' => new ArchiveRepositoryMongo(
+                (string) ($this->config['mongo_uri']  ?? 'mongodb://mongo:27017'),
+                (string) ($this->config['mongo_base'] ?? 'finkashi_analytics'),
+            ),
+            default => throw new InvalidArgumentException(
+                "Backend d'archive inconnu : {$backend}. Valeurs attendues : 'mysql' ou 'mongo'."
+            ),
+        };
     }
 
     public function statistiqueRepository(): StatistiqueRepository

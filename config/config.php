@@ -25,10 +25,6 @@ if (is_file(__DIR__ . '/secrets.php')) {
     }
 }
 
-/**
- * Lit d'abord dans le fichier secrets, sinon dans l'environnement.
- * $defaut est utilise uniquement pour les valeurs non sensibles.
- */
 $lire = static function (string $cle, ?string $envVar, ?string $defaut = null) use ($secrets) {
     if (array_key_exists($cle, $secrets)) {
         return (string) $secrets[$cle];
@@ -42,9 +38,6 @@ $lire = static function (string $cle, ?string $envVar, ?string $defaut = null) u
     return $defaut;
 };
 
-/**
- * Lit un secret obligatoire. Leve une exception si absent partout.
- */
 $obligatoire = static function (string $cle, string $envVar) use ($secrets, $lire): string {
     $valeur = $lire($cle, $envVar);
     if ($valeur === null || trim($valeur) === '') {
@@ -66,13 +59,20 @@ return [
     'chemin_base_geo' => $lire('app_geoip_path',  'APP_GEOIP_PATH',  __DIR__ . '/../data/GeoLite2-Country.mmdb'),
     'prefixe_tables'  => $lire('app_prefixe_tables', 'APP_PREFIXE_TABLES', ''),
 
-    // Domaines autorises en CORS pour /collect.
     'domaines_cors'   => array_values(array_filter(array_merge(
         [$lire('app_domaine', 'APP_DOMAINE', 'finkashi.fr')],
         array_map('trim', explode(',', $lire('app_origines_dev', 'APP_ORIGINES_DEV', '') ?? '')),
     ))),
 
-    // Secrets OBLIGATOIRES.
+    // Backend de stockage des metadonnees d'archives.
+    // Valeurs acceptees :
+    //   'mysql' (defaut) : table relationnelle dans la base principale ;
+    //   'mongo'          : collection MongoDB (necessite l'extension PHP
+    //                      mongodb et un service MongoDB joignable).
+    'archive_store'   => $lire('app_archive_store', 'APP_ARCHIVE_STORE', 'mysql'),
+    'mongo_uri'       => $lire('app_mongo_uri',     'APP_MONGO_URI',     'mongodb://mongo:27017'),
+    'mongo_base'      => $lire('app_mongo_base',    'APP_MONGO_BASE',    'finkashi_analytics'),
+
     'sel_secret'      => $obligatoire('app_sel_secret', 'APP_SEL_SECRET'),
     'cle_api'         => $obligatoire('app_api_key',    'APP_API_KEY'),
 ];

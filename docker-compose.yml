@@ -1,19 +1,13 @@
 services:
-  # ---------------------------------------------------------------
-  # Service applicatif PHP 8.3 (notre back-end Finkashi Analytics).
-  # ---------------------------------------------------------------
   php:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
     container_name: finkashi_php
-    volumes:
-      - .:/var/www/html
     ports:
       - "8080:80"
-    depends_on:
-      mysql:
-        condition: service_healthy
+    volumes:
+      - .:/var/www/html
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
@@ -24,25 +18,34 @@ services:
       APP_SEL_SECRET: ${APP_SEL_SECRET}
       APP_DOMAINE: ${APP_DOMAINE:-finkashi.fr}
       APP_ORIGINES_DEV: ${APP_ORIGINES_DEV:-}
+      # Backend de stockage des metadonnees d'archives.
+      # 'mysql' (defaut) ou 'mongo'.
+      APP_ARCHIVE_STORE: ${APP_ARCHIVE_STORE:-mysql}
+      APP_MONGO_URI: ${APP_MONGO_URI:-mongodb://mongo:27017}
+      APP_MONGO_BASE: ${APP_MONGO_BASE:-finkashi_analytics}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mongo:
+        condition: service_started
     networks:
       - finkashi_net
 
   mysql:
     image: mysql:8.0
     container_name: finkashi_mysql
-    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root_dev
+      MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: finkashi_analytics
       MYSQL_USER: finkashi
       MYSQL_PASSWORD: finkashi_dev
-    ports:
-      - "3306:3306"
     volumes:
-      - finkashi_db_data:/var/lib/mysql
-      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - mysql_data:/var/lib/mysql
+      - ./database/migrations:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_dev"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpass"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -50,48 +53,68 @@ services:
       - finkashi_net
 
   phpmyadmin:
-    image: phpmyadmin:latest
-    container_name: finkashi_phpmyadmin
-    environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306
-      UPLOAD_LIMIT: 64M
+    image: phpmyadmin:5
+    container_name: finkashi_pma
     ports:
       - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: finkashi
+      PMA_PASSWORD: finkashi_dev
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
     networks:
       - finkashi_net
 
-  # ---------------------------------------------------------------
-  # WordPress : environnement de developpement du plugin.
-  # Le plugin lui-meme est monte depuis ./wordpress-plugin/, ce qui
-  # permet de le modifier en temps reel depuis le poste.
-  # ---------------------------------------------------------------
   wordpress:
-    image: wordpress:6.7-php8.3-apache
-    container_name: finkashi_wordpress
+    image: wordpress:6.7
+    container_name: finkashi_wp
     ports:
       - "8090:80"
-    depends_on:
-      mysql:
-        condition: service_healthy
     environment:
       WORDPRESS_DB_HOST: mysql
       WORDPRESS_DB_USER: finkashi
       WORDPRESS_DB_PASSWORD: finkashi_dev
       WORDPRESS_DB_NAME: wordpress
-      WORDPRESS_DEBUG: 1
     volumes:
-      - finkashi_wp_data:/var/www/html
+      - wp_data:/var/www/html
       - ./wordpress-plugin/finkashi-analytics:/var/www/html/wp-content/plugins/finkashi-analytics
+    depends_on:
+      - mysql
+    networks:
+      - finkashi_net
+
+  # ----- Nouveaute branche NoSQL : MongoDB pour la persistance des archives ----
+
+  mongo:
+    image: mongo:4.4
+    container_name: finkashi_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - finkashi_net
+
+  # Interface d'administration MongoDB (equivalent de phpMyAdmin pour Mongo).
+  mongo-express:
+    image: mongo-express:0.54
+    container_name: finkashi_mongo_express
+    ports:
+      - "8082:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_BASICAUTH_USERNAME: ""
+      ME_CONFIG_BASICAUTH_PASSWORD: ""
+    depends_on:
+      - mongo
     networks:
       - finkashi_net
 
 volumes:
-  finkashi_db_data:
-  finkashi_wp_data:
+  mysql_data:
+  wp_data:
+  mongo_data:
 
 networks:
   finkashi_net:

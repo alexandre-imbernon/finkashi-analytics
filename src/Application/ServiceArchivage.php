@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Finkashi\Analytics\Application;
 
 use DateTimeImmutable;
-use Finkashi\Analytics\Infrastructure\ArchiveRepository;
+use Finkashi\Analytics\Application\Persistance\ArchiveStockage;
 use Finkashi\Analytics\Infrastructure\EvenementRepository;
 use RuntimeException;
 
@@ -15,14 +15,19 @@ use RuntimeException;
  * Avant toute purge, les evenements concernes sont exportes dans un
  * fichier JSON compresse (gzip) anonymise. Ce mecanisme constitue le
  * filet de securite : meme purges de la base, les donnees restent
- * recuperables a partir des archives. L'enregistrement en base
- * (table `archive`) trace l'historique de ces operations.
+ * recuperables a partir des archives.
+ *
+ * Le service depend du contrat ArchiveStockage, pas d'une
+ * implementation concrete. Cela permet de stocker les metadonnees
+ * d'archive aussi bien en MySQL qu'en MongoDB sans aucune
+ * modification de ce code metier : c'est la couche Infrastructure
+ * qui decide, via la Fabrique.
  */
 final class ServiceArchivage
 {
     public function __construct(
         private readonly EvenementRepository $evenements,
-        private readonly ArchiveRepository $archives,
+        private readonly ArchiveStockage $archives,
         private readonly string $dossierArchives,
     ) {
     }
@@ -54,10 +59,6 @@ final class ServiceArchivage
         gzwrite($flux, "[\n");
         $premier = true;
         foreach ($this->evenements->lireAvant($limite) as $ligne) {
-            // Anonymisation supplementaire dans l'archive : l'id et le
-            // hash sont conserves pour la coherence statistique, mais
-            // aucune donnee plus identifiante n'est ecrite (l'IP n'a
-            // jamais ete stockee, le user-agent non plus).
             if (!$premier) {
                 gzwrite($flux, ",\n");
             }
@@ -68,7 +69,6 @@ final class ServiceArchivage
         gzwrite($flux, "\n]\n");
         gzclose($flux);
 
-        // Purge effective.
         if ($nb > 0) {
             $supprimes = $this->evenements->supprimerAvant($limite);
             $this->archives->enregistrer(

@@ -4,13 +4,22 @@ declare(strict_types=1);
 
 namespace Finkashi\Analytics\Infrastructure;
 
+use Finkashi\Analytics\Application\Persistance\ArchiveStockage;
 use PDO;
 
 /**
- * Composant d'acces a la table `archive`, qui trace les fichiers
- * d'archive d'evenements bruts crees avant chaque purge.
+ * Implementation MySQL du contrat ArchiveStockage.
+ *
+ * Stocke les metadonnees d'archives dans la table relationnelle
+ * `archive` (eventuellement prefixee pour cohabitation avec
+ * d'autres applications dans la meme base).
+ *
+ * Cette classe expose egalement une methode utilitaire {@see tailleBase}
+ * qui ne fait pas partie du contrat ArchiveStockage : elle est
+ * specifique a MySQL (information_schema) et utilisee par le
+ * dashboard pour afficher l'occupation du quota d'hebergement.
  */
-final class ArchiveRepository
+final class ArchiveRepository implements ArchiveStockage
 {
     public function __construct(
         private readonly PDO $pdo,
@@ -39,6 +48,12 @@ final class ArchiveRepository
     /**
      * Estimation grossiere du poids de la base, en octets. Sert au
      * tracker de remplissage cote interface.
+     *
+     * Note : cette methode est en dehors du contrat ArchiveStockage
+     * car elle exploite une fonctionnalite specifique a MySQL
+     * (information_schema). Elle n'a pas d'equivalent direct cote
+     * NoSQL et n'est donc accessible que lorsque le projet utilise
+     * effectivement MySQL.
      */
     public function tailleBase(string $nomBase): int
     {
