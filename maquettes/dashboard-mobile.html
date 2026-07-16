@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Finkashi Analytics - Dashboard (mobile)</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <style>
+        body { background: var(--wp-bg); padding: 0; }
+        .phone-frame {
+            max-width: 380px;
+            margin: 24px auto;
+            background: #fff;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            min-height: 800px;
+        }
+    </style>
+</head>
+<body class="is-mobile">
+<div class="phone-frame">
+<div class="wp-admin">
+    <div class="wp-mobile-header" style="display: flex;">
+        <div class="wp-mobile-burger"><span></span><span></span><span></span></div>
+        <div style="font-weight: 600;">Finkashi</div>
+        <span style="flex: 1;"></span>
+        <span style="font-size: 11px; opacity: 0.7;">finkashi.fr</span>
+    </div>
+
+    <main class="wp-content">
+        <div class="wp-content-header">
+            <h1 class="wp-heading" style="font-size: 19px;">Dashboard</h1>
+            <div class="wp-subheading" style="font-size: 12px;">30 derniers jours</div>
+        </div>
+
+        <div class="wp-toolbar">
+            <select class="wp-select">
+                <option>7 derniers jours</option>
+                <option selected>30 derniers jours</option>
+                <option>90 derniers jours</option>
+            </select>
+        </div>
+
+        <div class="wp-grid">
+            <div class="wp-stat-card">
+                <div class="wp-stat-label">Visiteurs</div>
+                <div class="wp-stat-value">1 247</div>
+                <div class="wp-stat-delta up">+18%</div>
+            </div>
+            <div class="wp-stat-card">
+                <div class="wp-stat-label">Pages vues</div>
+                <div class="wp-stat-value">3 084</div>
+                <div class="wp-stat-delta up">+12%</div>
+            </div>
+            <div class="wp-stat-card">
+                <div class="wp-stat-label">P./visite</div>
+                <div class="wp-stat-value">2,47</div>
+                <div class="wp-stat-delta down">-3%</div>
+            </div>
+            <div class="wp-stat-card">
+                <div class="wp-stat-label">Pays</div>
+                <div class="wp-stat-value">23</div>
+                <div class="wp-stat-delta up">+4</div>
+            </div>
+        </div>
+
+        <div class="wp-card">
+            <div class="wp-card-header"><span class="wp-card-title">Trafic quotidien</span></div>
+            <div class="wp-card-body">
+                <div class="chart-line" style="height: 140px;">
+                    <svg viewBox="0 0 400 140" preserveAspectRatio="none">
+                        <line x1="0" y1="35" x2="400" y2="35" stroke="#dcdcde" stroke-dasharray="2 4"/>
+                        <line x1="0" y1="70" x2="400" y2="70" stroke="#dcdcde" stroke-dasharray="2 4"/>
+                        <line x1="0" y1="105" x2="400" y2="105" stroke="#dcdcde" stroke-dasharray="2 4"/>
+                        <path d="M0,120 L20,105 L40,98 L60,108 L80,90 L100,85 L120,75 L140,80 L160,65 L180,58 L200,62 L220,50 L240,55 L260,42 L280,38 L300,46 L320,35 L340,32 L360,25 L380,28 L400,20 L400,140 L0,140 Z" fill="#2271b1" opacity="0.12"/>
+                        <path d="M0,120 L20,105 L40,98 L60,108 L80,90 L100,85 L120,75 L140,80 L160,65 L180,58 L200,62 L220,50 L240,55 L260,42 L280,38 L300,46 L320,35 L340,32 L360,25 L380,28 L400,20" fill="none" stroke="#2271b1" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="wp-card">
+            <div class="wp-card-header"><span class="wp-card-title">Origine du trafic</span></div>
+            <div class="wp-card-body">
+                <div class="chart-donut">
+                    <svg width="100" height="100" viewBox="0 0 42 42">
+                        <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#f0f0f1" stroke-width="6"/>
+                        <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#2271b1" stroke-width="6" stroke-dasharray="42 100" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>
+                        <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#00a32a" stroke-width="6" stroke-dasharray="28 100" stroke-dashoffset="-17" transform="rotate(-90 21 21)"/>
+                        <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#dba617" stroke-width="6" stroke-dasharray="18 100" stroke-dashoffset="-45" transform="rotate(-90 21 21)"/>
+                        <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#787c82" stroke-width="6" stroke-dasharray="12 100" stroke-dashoffset="-63" transform="rotate(-90 21 21)"/>
+                    </svg>
+                    <div class="chart-legend">
+                        <div class="chart-legend-item"><span class="chart-legend-color" style="background:#2271b1;"></span><span class="chart-legend-label">Recherche</span><span class="chart-legend-value">42%</span></div>
+                        <div class="chart-legend-item"><span class="chart-legend-color" style="background:#00a32a;"></span><span class="chart-legend-label">Sociaux</span><span class="chart-legend-value">28%</span></div>
+                        <div class="chart-legend-item"><span class="chart-legend-color" style="background:#dba617;"></span><span class="chart-legend-label">Referent</span><span class="chart-legend-value">18%</span></div>
+                        <div class="chart-legend-item"><span class="chart-legend-color" style="background:#787c82;"></span><span class="chart-legend-label">Direct</span><span class="chart-legend-value">12%</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wp-card">
+            <div class="wp-card-header"><span class="wp-card-title">Top pages</span></div>
+            <table class="wp-table">
+                <tbody>
+                    <tr><td><div><strong>Garage : Bad Dream</strong></div><div class="chemin" style="font-size: 11px;">/articles/garage-bad-dream</div></td><td class="num">324</td></tr>
+                    <tr><td><div><strong>Pepites 3DS</strong></div><div class="chemin" style="font-size: 11px;">/articles/jeux-niche-3ds</div></td><td class="num">218</td></tr>
+                    <tr><td><div><strong>Accueil</strong></div><div class="chemin" style="font-size: 11px;">/</div></td><td class="num">186</td></tr>
+                    <tr><td><div><strong>Carnet mai</strong></div><div class="chemin" style="font-size: 11px;">/articles/carnet-mai</div></td><td class="num">142</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="wp-card">
+            <div class="wp-card-header"><span class="wp-card-title">Top sources</span></div>
+            <div class="wp-card-body">
+                <div class="chart-bar-h">
+                    <div class="chart-bar-row"><span>google.com</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width: 95%;"></div></div><span class="chart-bar-value">312</span></div>
+                    <div class="chart-bar-row"><span>reddit.com</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width: 64%; background:#00a32a;"></div></div><span class="chart-bar-value">208</span></div>
+                    <div class="chart-bar-row"><span>duckduckgo</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width: 38%;"></div></div><span class="chart-bar-value">124</span></div>
+                    <div class="chart-bar-row"><span>bsky.app</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width: 28%; background:#00a32a;"></div></div><span class="chart-bar-value">92</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wp-card">
+            <div class="wp-card-header"><span class="wp-card-title">Pays</span></div>
+            <table class="wp-table">
+                <tbody>
+                    <tr><td>🇫🇷 France</td><td class="num">812 (65%)</td></tr>
+                    <tr><td>🇧🇪 Belgique</td><td class="num">124 (10%)</td></tr>
+                    <tr><td>🇨🇦 Canada</td><td class="num">98 (8%)</td></tr>
+                    <tr><td>🇨🇭 Suisse</td><td class="num">76 (6%)</td></tr>
+                    <tr><td>Autres (19)</td><td class="num">137 (11%)</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+</html>

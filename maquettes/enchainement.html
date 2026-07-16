@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Finkashi Analytics - Enchainement des ecrans</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <style>
+        body { padding: 40px; }
+        .schema {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .schema h1 {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 8px;
+        }
+        .schema .legende {
+            color: var(--wp-text-muted);
+            margin-bottom: 32px;
+        }
+        .schema-canvas {
+            background: #fff;
+            border: 1px solid var(--wp-border-soft);
+            padding: 40px 24px;
+        }
+        .ecran-bloc {
+            background: var(--wp-bg-card);
+            border: 1px solid var(--wp-border);
+            padding: 16px;
+            text-align: center;
+            position: relative;
+        }
+        .ecran-bloc .titre {
+            font-weight: 600;
+            color: var(--wp-blue);
+            margin-bottom: 6px;
+        }
+        .ecran-bloc .role {
+            font-size: 11px;
+            color: var(--wp-text-muted);
+            line-height: 1.5;
+        }
+        .ecran-bloc .url {
+            font-family: ui-monospace, SFMono-Regular, monospace;
+            font-size: 11px;
+            color: var(--wp-text-light);
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--wp-border-soft);
+        }
+        .legende-flux {
+            margin-top: 24px;
+            display: flex;
+            gap: 24px;
+            font-size: 12px;
+            color: var(--wp-text-muted);
+        }
+        .legende-flux span::before {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 2px;
+            background: var(--wp-blue);
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        .legende-flux span.indirect::before {
+            background: var(--wp-text-light);
+            background-image: linear-gradient(to right, var(--wp-text-light) 50%, transparent 50%);
+            background-size: 6px 2px;
+        }
+    </style>
+</head>
+<body>
+<div class="schema">
+    <h1>Enchainement des ecrans</h1>
+    <p class="legende">Modelisation des transitions entre les ecrans du plugin Finkashi Analytics dans l'admin WordPress.</p>
+
+    <div class="schema-canvas">
+        <svg viewBox="0 0 1000 600" style="width: 100%; height: auto;" xmlns="http://www.w3.org/2000/svg">
+            <!-- Definition des fleches -->
+            <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#2271b1"/>
+                </marker>
+                <marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#787c82"/>
+                </marker>
+            </defs>
+
+            <!-- Ecran d'entree : admin WP -->
+            <g>
+                <rect x="40" y="240" width="180" height="100" fill="#ffffff" stroke="#1d2327" stroke-width="2" rx="2"/>
+                <text x="130" y="270" text-anchor="middle" font-size="13" font-weight="600" fill="#1d2327">Admin WordPress</text>
+                <text x="130" y="290" text-anchor="middle" font-size="11" fill="#50575e">Ecran d'entree</text>
+                <text x="130" y="320" text-anchor="middle" font-family="monospace" font-size="10" fill="#787c82">/wp-admin/</text>
+            </g>
+
+            <!-- Dashboard -->
+            <g>
+                <rect x="380" y="80" width="200" height="120" fill="#ffffff" stroke="#2271b1" stroke-width="2" rx="2"/>
+                <text x="480" y="110" text-anchor="middle" font-size="14" font-weight="600" fill="#2271b1">Dashboard</text>
+                <text x="480" y="132" text-anchor="middle" font-size="11" fill="#50575e">Vue principale,</text>
+                <text x="480" y="148" text-anchor="middle" font-size="11" fill="#50575e">graphes et tableaux</text>
+                <text x="480" y="180" text-anchor="middle" font-family="monospace" font-size="10" fill="#787c82">/wp-admin/admin.php?page=finkashi</text>
+            </g>
+
+            <!-- Alertes -->
+            <g>
+                <rect x="380" y="240" width="200" height="120" fill="#ffffff" stroke="#2271b1" stroke-width="2" rx="2"/>
+                <text x="480" y="270" text-anchor="middle" font-size="14" font-weight="600" fill="#2271b1">Alertes</text>
+                <text x="480" y="292" text-anchor="middle" font-size="11" fill="#50575e">Regles et historique</text>
+                <text x="480" y="308" text-anchor="middle" font-size="11" fill="#50575e">des declenchements</text>
+                <text x="480" y="340" text-anchor="middle" font-family="monospace" font-size="10" fill="#787c82">/wp-admin/admin.php?page=finkashi-alertes</text>
+            </g>
+
+            <!-- Reglages -->
+            <g>
+                <rect x="380" y="400" width="200" height="120" fill="#ffffff" stroke="#2271b1" stroke-width="2" rx="2"/>
+                <text x="480" y="430" text-anchor="middle" font-size="14" font-weight="600" fill="#2271b1">Reglages</text>
+                <text x="480" y="452" text-anchor="middle" font-size="11" fill="#50575e">Connexion au service,</text>
+                <text x="480" y="468" text-anchor="middle" font-size="11" fill="#50575e">activation du tracker</text>
+                <text x="480" y="500" text-anchor="middle" font-family="monospace" font-size="10" fill="#787c82">/wp-admin/admin.php?page=finkashi-reglages</text>
+            </g>
+
+            <!-- Modale Nouvelle regle -->
+            <g>
+                <rect x="720" y="220" width="220" height="100" fill="#fafafa" stroke="#dba617" stroke-width="2" stroke-dasharray="6 3" rx="2"/>
+                <text x="830" y="250" text-anchor="middle" font-size="13" font-weight="600" fill="#826200">Modale "Nouvelle regle"</text>
+                <text x="830" y="270" text-anchor="middle" font-size="11" fill="#50575e">Formulaire de creation</text>
+                <text x="830" y="286" text-anchor="middle" font-size="11" fill="#50575e">ou de modification</text>
+                <text x="830" y="306" text-anchor="middle" font-size="10" font-style="italic" fill="#787c82">surcouche sans changement d'URL</text>
+            </g>
+
+            <!-- Fleches navigation principale -->
+            <!-- Admin -> Dashboard (entree par defaut) -->
+            <path d="M 220 280 Q 290 280 290 140 L 370 140" fill="none" stroke="#2271b1" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="240" y="200" font-size="10" fill="#2271b1" font-weight="600">menu &gt; Finkashi</text>
+
+            <!-- Dashboard <-> Alertes -->
+            <path d="M 480 200 L 480 240" fill="none" stroke="#2271b1" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+
+            <!-- Alertes <-> Reglages -->
+            <path d="M 480 360 L 480 400" fill="none" stroke="#2271b1" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+
+            <!-- Dashboard <-> Reglages (sous-menu) -->
+            <path d="M 380 160 Q 340 160 340 460 L 380 460" fill="none" stroke="#787c82" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arrow-grey)" marker-start="url(#arrow-grey)"/>
+
+            <!-- Alertes -> Modale -->
+            <path d="M 580 280 L 720 270" fill="none" stroke="#dba617" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="620" y="262" font-size="10" fill="#826200" font-weight="600">bouton "Nouvelle regle"</text>
+
+            <!-- Modale -> Alertes (retour) -->
+            <path d="M 720 290 L 580 305" fill="none" stroke="#787c82" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arrow-grey)"/>
+            <text x="600" y="320" font-size="10" fill="#787c82" font-style="italic">enregistrer / annuler</text>
+        </svg>
+
+        <div class="legende-flux">
+            <span>Navigation directe (menu, lien)</span>
+            <span class="indirect">Transition via action (bouton, validation)</span>
+        </div>
+    </div>
+
+    <div style="margin-top: 32px; background: #fff; border: 1px solid var(--wp-border-soft); padding: 24px;">
+        <h2 style="font-size: 16px; margin-bottom: 12px;">Description des transitions</h2>
+        <ol style="padding-left: 20px; line-height: 1.8; font-size: 13px; color: var(--wp-text);">
+            <li>L'administrateur clique sur l'entree <strong>Finkashi</strong> dans le menu lateral de WordPress. Le <strong>Dashboard</strong> est l'ecran par defaut.</li>
+            <li>Depuis n'importe quel ecran du plugin, le sous-menu permet de naviguer vers <strong>Dashboard</strong>, <strong>Alertes</strong> ou <strong>Reglages</strong>.</li>
+            <li>Sur l'ecran <strong>Alertes</strong>, le bouton "Nouvelle regle" (ou "Modifier" sur une ligne existante) ouvre une <strong>modale</strong> de saisie. La validation ou l'annulation referme la modale et rafraichit le tableau des regles, sans changer d'URL.</li>
+            <li>Apres modification dans les <strong>Reglages</strong>, le bouton "Enregistrer" sauvegarde les changements et affiche une notification de succes au-dessus du formulaire.</li>
+            <li>Le bouton "Tester la connexion" dans les <strong>Reglages</strong> envoie un appel a l'API et affiche le resultat sans quitter l'ecran.</li>
+        </ol>
+    </div>
+</div>
+</body>
+</html>

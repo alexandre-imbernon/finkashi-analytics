@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Finkashi Analytics - Dashboard (desktop)</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="wp-admin">
+    <!-- Menu principal de l'admin WordPress -->
+    <nav class="wp-sidebar">
+        <div class="wp-sidebar-section">
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">⌂</span> Tableau de bord</a>
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">▤</span> Articles</a>
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">▦</span> Pages</a>
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">▥</span> Commentaires</a>
+        </div>
+        <div class="wp-sidebar-section">
+            <a class="wp-menu-item active" href="#"><span class="wp-menu-icon">⌬</span> Finkashi</a>
+            <div class="wp-submenu">
+                <a class="active" href="#">Dashboard</a>
+                <a href="alertes-desktop.html">Alertes</a>
+                <a href="reglages-desktop.html">Reglages</a>
+            </div>
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">▢</span> Apparence</a>
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">▣</span> Extensions</a>
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">⚙</span> Reglages</a>
+        </div>
+    </nav>
+
+    <main class="wp-content">
+        <div class="wp-content-header">
+            <h1 class="wp-heading">Finkashi Analytics</h1>
+            <div class="wp-subheading">Statistiques de frequentation du site, sans cookie ni traceur publicitaire.</div>
+        </div>
+
+        <!-- Barre de filtres -->
+        <div class="wp-toolbar">
+            <label>Periode :</label>
+            <select class="wp-select" style="max-width: 180px;">
+                <option>7 derniers jours</option>
+                <option selected>30 derniers jours</option>
+                <option>90 derniers jours</option>
+                <option>Annee en cours</option>
+                <option>Personnalise...</option>
+            </select>
+            <span style="color: var(--wp-text-light); font-size: 12px;">du 29 avril au 29 mai 2026</span>
+            <span style="flex: 1;"></span>
+            <button class="wp-button-secondary wp-button">Exporter les donnees</button>
+        </div>
+
+        <!-- Indicateurs cles -->
+        <div class="wp-grid">
+            <div class="wp-stat-card">
+                <div class="wp-stat-label">Visiteurs uniques</div>
+                <div class="wp-stat-value">1 247</div>
+                <div class="wp-stat-delta up">+18% vs periode precedente</div>
+            </div>
+            <div class="wp-stat-card">
+                <div class="wp-stat-label">Pages vues</div>
+                <div class="wp-stat-value">3 084</div>
+                <div class="wp-stat-delta up">+12%</div>
+            </div>
+            <div class="wp-stat-card">
+                <div class="wp-stat-label">Pages / visite</div>
+                <div class="wp-stat-value">2,47</div>
+                <div class="wp-stat-delta down">-3%</div>
+            </div>
+            <div class="wp-stat-card">
+                <div class="wp-stat-label">Pays touches</div>
+                <div class="wp-stat-value">23</div>
+                <div class="wp-stat-delta up">+4</div>
+            </div>
+        </div>
+
+        <!-- Graphique de trafic -->
+        <div class="wp-card">
+            <div class="wp-card-header">
+                <span class="wp-card-title">Trafic quotidien</span>
+                <span style="font-size: 12px; color: var(--wp-text-muted);">Visiteurs et pages vues</span>
+            </div>
+            <div class="wp-card-body">
+                <div class="chart-line">
+                    <svg viewBox="0 0 800 200" preserveAspectRatio="none">
+                        <!-- Grille -->
+                        <line x1="0" y1="50" x2="800" y2="50" stroke="#dcdcde" stroke-dasharray="2 4"/>
+                        <line x1="0" y1="100" x2="800" y2="100" stroke="#dcdcde" stroke-dasharray="2 4"/>
+                        <line x1="0" y1="150" x2="800" y2="150" stroke="#dcdcde" stroke-dasharray="2 4"/>
+                        <!-- Aire visiteurs -->
+                        <path d="M0,170 L40,150 L80,140 L120,155 L160,130 L200,125 L240,110 L280,115 L320,95 L360,85 L400,90 L440,75 L480,80 L520,65 L560,60 L600,70 L640,55 L680,50 L720,40 L760,45 L800,35 L800,200 L0,200 Z" fill="#2271b1" opacity="0.12"/>
+                        <!-- Ligne visiteurs -->
+                        <path d="M0,170 L40,150 L80,140 L120,155 L160,130 L200,125 L240,110 L280,115 L320,95 L360,85 L400,90 L440,75 L480,80 L520,65 L560,60 L600,70 L640,55 L680,50 L720,40 L760,45 L800,35" fill="none" stroke="#2271b1" stroke-width="2"/>
+                        <!-- Ligne pages vues -->
+                        <path d="M0,160 L40,135 L80,120 L120,145 L160,110 L200,105 L240,85 L280,95 L320,70 L360,55 L400,65 L440,40 L480,50 L520,30 L560,25 L600,40 L640,20 L680,15 L720,5 L760,10 L800,0" fill="none" stroke="#00a32a" stroke-width="2" stroke-dasharray="4 3"/>
+                    </svg>
+                </div>
+                <div style="display: flex; gap: 24px; font-size: 12px; color: var(--wp-text-muted); margin-top: 8px;">
+                    <span><span style="display:inline-block;width:12px;height:2px;background:#2271b1;margin-right:6px;vertical-align:middle;"></span>Visiteurs uniques</span>
+                    <span><span style="display:inline-block;width:12px;height:2px;background:#00a32a;margin-right:6px;vertical-align:middle;border-top:2px dashed #00a32a;"></span>Pages vues</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deux colonnes : canaux + top pages -->
+        <div style="display: grid; grid-template-columns: 1fr 1.4fr; gap: 16px;">
+            <div class="wp-card">
+                <div class="wp-card-header"><span class="wp-card-title">Origine du trafic</span></div>
+                <div class="wp-card-body">
+                    <div class="chart-donut">
+                        <svg width="120" height="120" viewBox="0 0 42 42">
+                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#f0f0f1" stroke-width="6"/>
+                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#2271b1" stroke-width="6" stroke-dasharray="42 100" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>
+                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#00a32a" stroke-width="6" stroke-dasharray="28 100" stroke-dashoffset="-17" transform="rotate(-90 21 21)"/>
+                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#dba617" stroke-width="6" stroke-dasharray="18 100" stroke-dashoffset="-45" transform="rotate(-90 21 21)"/>
+                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#787c82" stroke-width="6" stroke-dasharray="12 100" stroke-dashoffset="-63" transform="rotate(-90 21 21)"/>
+                        </svg>
+                        <div class="chart-legend">
+                            <div class="chart-legend-item"><span class="chart-legend-color" style="background:#2271b1;"></span><span class="chart-legend-label">Recherche</span><span class="chart-legend-value">42%</span></div>
+                            <div class="chart-legend-item"><span class="chart-legend-color" style="background:#00a32a;"></span><span class="chart-legend-label">Reseaux sociaux</span><span class="chart-legend-value">28%</span></div>
+                            <div class="chart-legend-item"><span class="chart-legend-color" style="background:#dba617;"></span><span class="chart-legend-label">Referent</span><span class="chart-legend-value">18%</span></div>
+                            <div class="chart-legend-item"><span class="chart-legend-color" style="background:#787c82;"></span><span class="chart-legend-label">Direct</span><span class="chart-legend-value">12%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wp-card">
+                <div class="wp-card-header"><span class="wp-card-title">Pages les plus consultees</span></div>
+                <table class="wp-table">
+                    <thead><tr><th>Page</th><th class="num">Visiteurs</th><th class="num">Vues</th></tr></thead>
+                    <tbody>
+                        <tr><td><div><strong>Garage : Bad Dream Adventure</strong></div><div class="chemin">/articles/garage-bad-dream</div></td><td class="num">324</td><td class="num">487</td></tr>
+                        <tr><td><div><strong>Pepites meconnues sur 3DS</strong></div><div class="chemin">/articles/jeux-niche-3ds</div></td><td class="num">218</td><td class="num">301</td></tr>
+                        <tr><td><div><strong>Accueil</strong></div><div class="chemin">/</div></td><td class="num">186</td><td class="num">412</td></tr>
+                        <tr><td><div><strong>Carnet de jeu - mai</strong></div><div class="chemin">/articles/carnet-mai</div></td><td class="num">142</td><td class="num">189</td></tr>
+                        <tr><td><div><strong>A propos</strong></div><div class="chemin">/a-propos</div></td><td class="num">87</td><td class="num">95</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Sources et pays -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+            <div class="wp-card">
+                <div class="wp-card-header"><span class="wp-card-title">Top sources de trafic</span></div>
+                <div class="wp-card-body">
+                    <div class="chart-bar-h">
+                        <div class="chart-bar-row"><span>google.com</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width: 95%;"></div></div><span class="chart-bar-value">312</span></div>
+                        <div class="chart-bar-row"><span>reddit.com</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width: 64%; background:#00a32a;"></div></div><span class="chart-bar-value">208</span></div>
+                        <div class="chart-bar-row"><span>duckduckgo.com</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width: 38%;"></div></div><span class="chart-bar-value">124</span></div>
+                        <div class="chart-bar-row"><span>bsky.app</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width: 28%; background:#00a32a;"></div></div><span class="chart-bar-value">92</span></div>
+                        <div class="chart-bar-row"><span>senscritique.com</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width: 20%; background:#dba617;"></div></div><span class="chart-bar-value">66</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wp-card">
+                <div class="wp-card-header"><span class="wp-card-title">Repartition geographique</span></div>
+                <table class="wp-table">
+                    <thead><tr><th>Pays</th><th class="num">Visiteurs</th><th class="num">Part</th></tr></thead>
+                    <tbody>
+                        <tr><td>🇫🇷 France</td><td class="num">812</td><td class="num">65%</td></tr>
+                        <tr><td>🇧🇪 Belgique</td><td class="num">124</td><td class="num">10%</td></tr>
+                        <tr><td>🇨🇦 Canada</td><td class="num">98</td><td class="num">8%</td></tr>
+                        <tr><td>🇨🇭 Suisse</td><td class="num">76</td><td class="num">6%</td></tr>
+                        <tr><td>🇯🇵 Japon</td><td class="num">42</td><td class="num">3%</td></tr>
+                        <tr><td>Autres (18 pays)</td><td class="num">95</td><td class="num">8%</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Finkashi Analytics - Maquettes</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="index-page">
+    <h1>Maquettes Finkashi Analytics</h1>
+    <p class="subtitle">Plugin WordPress pour la consultation des statistiques de frequentation. Style natif de l'admin WordPress, conforme a la charte de l'hote.</p>
+
+    <div class="index-group">
+        <h2>Schema d'enchainement</h2>
+        <div class="index-grid">
+            <a class="index-card" href="enchainement.html">
+                <h3>Navigation entre les ecrans</h3>
+                <p>Diagramme de transition : entree par le menu admin, sous-menu et modales.</p>
+                <span class="device">CP2 - Enchainement</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="index-group">
+        <h2>Dashboard</h2>
+        <div class="index-grid">
+            <a class="index-card" href="dashboard-desktop.html">
+                <h3>Vue principale (desktop)</h3>
+                <p>Indicateurs cles, trafic quotidien, origine du trafic, top pages, top sources, repartition par pays.</p>
+                <span class="device">Desktop · 1280px+</span>
+            </a>
+            <a class="index-card" href="dashboard-mobile.html">
+                <h3>Vue principale (mobile)</h3>
+                <p>Memes informations adaptees a un ecran etroit : cartes empilees, donut compact, tableaux raccourcis.</p>
+                <span class="device">Mobile · 380px</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="index-group">
+        <h2>Alertes</h2>
+        <div class="index-grid">
+            <a class="index-card" href="alertes-desktop.html">
+                <h3>Liste et historique (desktop)</h3>
+                <p>Regles configurees, historique des declenchements, formulaire de creation.</p>
+                <span class="device">Desktop · 1280px+</span>
+            </a>
+            <a class="index-card" href="alertes-mobile.html">
+                <h3>Liste et historique (mobile)</h3>
+                <p>Cartes compactes pour les regles, liste deroulante de l'historique, bouton de creation en pleine largeur.</p>
+                <span class="device">Mobile · 380px</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="index-group">
+        <h2>Reglages</h2>
+        <div class="index-grid">
+            <a class="index-card" href="reglages-desktop.html">
+                <h3>Configuration (desktop)</h3>
+                <p>Connexion au service, suivi des visites, sections informatives sur la vie privee.</p>
+                <span class="device">Desktop · 1280px+</span>
+            </a>
+            <a class="index-card" href="reglages-mobile.html">
+                <h3>Configuration (mobile)</h3>
+                <p>Formulaire empile en colonne unique, boutons d'action pleine largeur.</p>
+                <span class="device">Mobile · 380px</span>
+            </a>
+        </div>
+    </div>
+
+    <div style="margin-top: 48px; padding: 20px; background: #fff; border: 1px solid var(--wp-border-soft);">
+        <h2 style="font-size: 14px; margin-bottom: 12px;">Choix de conception</h2>
+        <p style="font-size: 13px; color: var(--wp-text); line-height: 1.7;">
+            Les maquettes reproduisent <strong>fidelement le style natif de l'admin WordPress</strong> (palette, typographie, espacements, composants) afin que le plugin s'integre sans rupture visuelle dans son environnement d'accueil. C'est une exigence de la charte graphique du logiciel hote.
+        </p>
+        <p style="font-size: 13px; color: var(--wp-text); line-height: 1.7; margin-top: 12px;">
+            <strong>Accessibilite</strong> : contrastes conformes WCAG AA, taille de police minimale 12 px, etiquettes explicites sur tous les champs de formulaire, ordre de tabulation logique. L'interface est utilisable au clavier et compatible avec les lecteurs d'ecran (semantique HTML standard, ARIA si necessaire au moment de l'implementation).
+        </p>
+        <p style="font-size: 13px; color: var(--wp-text); line-height: 1.7; margin-top: 12px;">
+            <strong>Responsivite</strong> : grille fluide, bascule de la grille a une seule colonne sous 768 px, menu lateral remplace par une barre superieure avec hamburger, donuts et legendes empiles verticalement.
+        </p>
+        <p style="font-size: 13px; color: var(--wp-text); line-height: 1.7; margin-top: 12px;">
+            <strong>Eco-conception</strong> : aucune image bitmap dans l'interface (illustrations en SVG inline ou emoji), pas de polices web chargees (utilisation des polices systeme deja presentes sur l'appareil), graphiques generes cote client a partir des donnees minimales transmises par l'API.
+        </p>
+    </div>
+</div>
+</body>
+</html>
