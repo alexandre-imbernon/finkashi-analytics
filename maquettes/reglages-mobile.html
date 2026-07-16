@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Finkashi Analytics - Reglages (mobile)</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <style>
+        body { background: var(--wp-bg); padding: 0; }
+        .phone-frame {
+            max-width: 380px;
+            margin: 24px auto;
+            background: #fff;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            min-height: 800px;
+        }
+    </style>
+</head>
+<body class="is-mobile">
+<div class="phone-frame">
+<div class="wp-admin">
+    <div class="wp-mobile-header" style="display: flex;">
+        <div class="wp-mobile-burger"><span></span><span></span><span></span></div>
+        <div style="font-weight: 600;">Finkashi - Reglages</div>
+    </div>
+
+    <main class="wp-content">
+        <div class="wp-content-header">
+            <h1 class="wp-heading" style="font-size: 19px;">Reglages</h1>
+        </div>
+
+        <div class="wp-notice success" style="padding: 8px 12px;">
+            <strong style="font-size: 12px;">Connexion active.</strong>
+            <span style="font-size: 11px; color: var(--wp-text-muted);"> Dernier event il y a 3 min.</span>
+        </div>
+
+        <form>
+            <h2 class="wp-section-heading" style="font-size: 14px;">Connexion</h2>
+            <table class="wp-form-table">
+                <tr>
+                    <th><label for="url">URL du service</label></th>
+                    <td>
+                        <input type="text" id="url" class="wp-input" value="https://analytics.finkashi.fr">
+                        <span class="wp-help" style="font-size: 11px;">URL publique du back-end. Doit etre en HTTPS.</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="cle">Cle d'API</label></th>
+                    <td>
+                        <input type="password" id="cle" class="wp-input" value="••••••••••••••••">
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="domaine">Domaine</label></th>
+                    <td>
+                        <input type="text" id="domaine" class="wp-input" value="finkashi.fr">
+                    </td>
+                </tr>
+            </table>
+
+            <h2 class="wp-section-heading" style="font-size: 14px;">Suivi</h2>
+            <div style="padding: 8px 0;">
+                <label style="display: block; padding: 6px 0;"><input type="checkbox" class="wp-checkbox" checked> Activer le tracker</label>
+                <label style="display: block; padding: 6px 0;"><input type="checkbox" class="wp-checkbox" checked> Exclure les administrateurs</label>
+            </div>
+
+            <h2 class="wp-section-heading" style="font-size: 14px;">Vie privee</h2>
+            <div style="padding: 8px 0; font-size: 12px;">
+                <div style="margin-bottom: 8px;"><span class="wp-badge wp-badge-success">Cookieless</span> Aucun cookie depose.</div>
+                <div style="margin-bottom: 8px;"><span class="wp-badge wp-badge-success">Anonyme</span> IP non conservee.</div>
+                <div style="color: var(--wp-text-muted);">Retention : 60 jours en brut, agreges illimites. Conforme CNIL.</div>
+            </div>
+
+            <p style="margin-top: 20px;">
+                <button type="submit" class="wp-button" style="width: 100%; padding: 10px;">Enregistrer</button>
+                <button type="button" class="wp-button-secondary wp-button" style="width: 100%; padding: 10px; margin-top: 8px;">Tester la connexion</button>
+            </p>
+        </form>
+    </main>
+</div>
+</div>
+</body>
+</html>

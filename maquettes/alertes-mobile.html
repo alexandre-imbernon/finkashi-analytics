@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Finkashi Analytics - Alertes (mobile)</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <style>
+        body { background: var(--wp-bg); padding: 0; }
+        .phone-frame {
+            max-width: 380px;
+            margin: 24px auto;
+            background: #fff;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            min-height: 800px;
+        }
+        .alerte-mobile {
+            border-bottom: 1px solid var(--wp-border-soft);
+            padding: 12px 16px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            font-size: 13px;
+        }
+        .alerte-mobile:last-child { border-bottom: none; }
+    </style>
+</head>
+<body class="is-mobile">
+<div class="phone-frame">
+<div class="wp-admin">
+    <div class="wp-mobile-header" style="display: flex;">
+        <div class="wp-mobile-burger"><span></span><span></span><span></span></div>
+        <div style="font-weight: 600;">Finkashi - Alertes</div>
+    </div>
+
+    <main class="wp-content">
+        <div class="wp-content-header">
+            <h1 class="wp-heading" style="font-size: 19px;">Alertes</h1>
+        </div>
+
+        <button class="wp-button" style="width: 100%; padding: 10px; margin-bottom: 16px;">+ Nouvelle regle</button>
+
+        <div class="wp-card">
+            <div class="wp-card-header"><span class="wp-card-title">Regles (3)</span></div>
+            <div class="alerte-mobile">
+                <div>
+                    <strong>Visiteurs &lt; 10 / jour</strong>
+                    <div style="color: var(--wp-text-muted); font-size: 11px;">Derniere alerte il y a 2 jours</div>
+                </div>
+                <div><span class="wp-badge wp-badge-success">Active</span></div>
+            </div>
+            <div class="alerte-mobile">
+                <div>
+                    <strong>Pages vues &gt; 1 000 / jour</strong>
+                    <div style="color: var(--wp-text-muted); font-size: 11px;">Jamais declenchee</div>
+                </div>
+                <div><span class="wp-badge wp-badge-success">Active</span></div>
+            </div>
+            <div class="alerte-mobile">
+                <div>
+                    <strong>Visiteurs &gt; 500 / jour</strong>
+                    <div style="color: var(--wp-text-muted); font-size: 11px;">Il y a 12 jours</div>
+                </div>
+                <div><span class="wp-badge wp-badge-neutral">Off</span></div>
+            </div>
+        </div>
+
+        <div class="wp-card">
+            <div class="wp-card-header"><span class="wp-card-title">Historique</span></div>
+            <div class="alerte-mobile">
+                <div>
+                    <strong>Visiteurs &lt; 10</strong>
+                    <div style="color: var(--wp-text-muted); font-size: 11px;">27 mai - 23:30 - obs. 7</div>
+                </div>
+                <div><span class="wp-badge wp-badge-success" style="font-size: 10px;">Envoyee</span></div>
+            </div>
+            <div class="alerte-mobile">
+                <div>
+                    <strong>Visiteurs &gt; 500</strong>
+                    <div style="color: var(--wp-text-muted); font-size: 11px;">17 mai - 03:14 - obs. 612</div>
+                </div>
+                <div><span class="wp-badge wp-badge-success" style="font-size: 10px;">Envoyee</span></div>
+            </div>
+            <div class="alerte-mobile">
+                <div>
+                    <strong>Visiteurs &lt; 10</strong>
+                    <div style="color: var(--wp-text-muted); font-size: 11px;">11 mai - 23:30 - obs. 4</div>
+                </div>
+                <div><span class="wp-badge wp-badge-success" style="font-size: 10px;">Envoyee</span></div>
+            </div>
+            <div class="alerte-mobile">
+                <div>
+                    <strong>Visiteurs &lt; 10</strong>
+                    <div style="color: var(--wp-text-muted); font-size: 11px;">03 mai - 23:30 - obs. 8</div>
+                </div>
+                <div><span class="wp-badge wp-badge-warning" style="font-size: 10px;">Echec</span></div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+</html>

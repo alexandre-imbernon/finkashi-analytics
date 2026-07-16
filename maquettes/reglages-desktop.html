@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Finkashi Analytics - Reglages (desktop)</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="wp-admin">
+    <nav class="wp-sidebar">
+        <div class="wp-sidebar-section">
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">⌂</span> Tableau de bord</a>
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">▤</span> Articles</a>
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">▦</span> Pages</a>
+        </div>
+        <div class="wp-sidebar-section">
+            <a class="wp-menu-item active" href="#"><span class="wp-menu-icon">⌬</span> Finkashi</a>
+            <div class="wp-submenu">
+                <a href="dashboard-desktop.html">Dashboard</a>
+                <a href="alertes-desktop.html">Alertes</a>
+                <a class="active" href="#">Reglages</a>
+            </div>
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">▢</span> Apparence</a>
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">⚙</span> Reglages</a>
+        </div>
+    </nav>
+
+    <main class="wp-content">
+        <div class="wp-content-header">
+            <h1 class="wp-heading">Reglages Finkashi Analytics</h1>
+            <div class="wp-subheading">Configuration de la connexion au service de mesure d'audience.</div>
+        </div>
+
+        <div class="wp-notice success">
+            <strong>Connexion au service active.</strong> Dernier evenement collecte il y a 3 minutes.
+        </div>
+
+        <form>
+            <h2 class="wp-section-heading">Connexion au service</h2>
+            <table class="wp-form-table">
+                <tr>
+                    <th><label for="url">URL du service</label></th>
+                    <td>
+                        <input type="text" id="url" class="wp-input" value="https://analytics.finkashi.fr">
+                        <span class="wp-help">URL publique de votre back-end Finkashi Analytics. Doit etre en HTTPS.</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="cle">Cle d'API</label></th>
+                    <td>
+                        <input type="password" id="cle" class="wp-input" value="••••••••••••••••••••••••••••••••">
+                        <span class="wp-help">Cle secrete partagee avec le service. <a href="#">Pourquoi est-ce necessaire ?</a></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="domaine">Domaine du site</label></th>
+                    <td>
+                        <input type="text" id="domaine" class="wp-input" value="finkashi.fr">
+                        <span class="wp-help">Domaine surveille. Le tracker n'enregistre que les visites de ce domaine.</span>
+                    </td>
+                </tr>
+            </table>
+
+            <h2 class="wp-section-heading">Suivi des visites</h2>
+            <table class="wp-form-table">
+                <tr>
+                    <th>Activation du tracker</th>
+                    <td>
+                        <label><input type="checkbox" class="wp-checkbox" checked> Injecter le script de mesure dans toutes les pages publiques du site</label>
+                        <span class="wp-help">Decochez pour suspendre temporairement la collecte sans desinstaller le plugin.</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Exclusion des administrateurs</th>
+                    <td>
+                        <label><input type="checkbox" class="wp-checkbox" checked> Ne pas mesurer les visites des utilisateurs connectes en tant qu'administrateur</label>
+                        <span class="wp-help">Evite que votre propre navigation gonfle les statistiques.</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Pages a exclure</th>
+                    <td>
+                        <textarea class="wp-input" rows="3" placeholder="/admin/&#10;/preview/">/preview/</textarea>
+                        <span class="wp-help">Un chemin par ligne. Les pages dont l'URL commence par l'un de ces prefixes ne sont pas mesurees.</span>
+                    </td>
+                </tr>
+            </table>
+
+            <h2 class="wp-section-heading">Vie privee</h2>
+            <table class="wp-form-table">
+                <tr>
+                    <th>Mode de collecte</th>
+                    <td>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span class="wp-badge wp-badge-success">Cookieless</span>
+                            <span style="font-size: 13px; color: var(--wp-text-muted);">Aucun cookie n'est depose. Aucun identifiant persistant cote visiteur.</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Adresse IP</th>
+                    <td>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span class="wp-badge wp-badge-success">Non conservee</span>
+                            <span style="font-size: 13px; color: var(--wp-text-muted);">Utilisee uniquement pour le calcul d'empreinte anonyme et la geolocalisation pays. Jamais stockee.</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Conservation des donnees</th>
+                    <td>
+                        <span style="font-size: 13px;">Donnees brutes : 60 jours. Donnees agregees : indefinie.</span>
+                        <span class="wp-help">Conforme aux recommandations CNIL pour la mesure d'audience exemptee de consentement.</span>
+                    </td>
+                </tr>
+            </table>
+
+            <p style="margin-top: 24px;">
+                <button type="submit" class="wp-button">Enregistrer les modifications</button>
+                <button type="button" class="wp-button-secondary wp-button" style="margin-left: 8px;">Tester la connexion</button>
+            </p>
+        </form>
+    </main>
+</div>
+</body>
+</html>

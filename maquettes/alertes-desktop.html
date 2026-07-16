@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Finkashi Analytics - Alertes (desktop)</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="wp-admin">
+    <nav class="wp-sidebar">
+        <div class="wp-sidebar-section">
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">⌂</span> Tableau de bord</a>
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">▤</span> Articles</a>
+        </div>
+        <div class="wp-sidebar-section">
+            <a class="wp-menu-item active" href="#"><span class="wp-menu-icon">⌬</span> Finkashi</a>
+            <div class="wp-submenu">
+                <a href="dashboard-desktop.html">Dashboard</a>
+                <a class="active" href="#">Alertes</a>
+                <a href="reglages-desktop.html">Reglages</a>
+            </div>
+            <a class="wp-menu-item" href="#"><span class="wp-menu-icon">⚙</span> Reglages</a>
+        </div>
+    </nav>
+
+    <main class="wp-content">
+        <div class="wp-content-header">
+            <h1 class="wp-heading">Alertes <button class="wp-button" style="font-size: 12px; padding: 2px 10px; margin-left: 12px; vertical-align: middle;">Nouvelle regle</button></h1>
+            <div class="wp-subheading">Soyez prevenu lorsque le trafic franchit un seuil que vous avez defini.</div>
+        </div>
+
+        <div class="wp-card">
+            <div class="wp-card-header">
+                <span class="wp-card-title">Regles configurees</span>
+                <span style="font-size: 12px; color: var(--wp-text-muted);">2 actives, 1 desactivee</span>
+            </div>
+            <table class="wp-table">
+                <thead>
+                    <tr>
+                        <th>Etat</th>
+                        <th>Metrique</th>
+                        <th>Condition</th>
+                        <th class="num">Seuil</th>
+                        <th>Derniere alerte</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="wp-badge wp-badge-success">Active</span></td>
+                        <td>Visiteurs / jour</td>
+                        <td>Inferieur a</td>
+                        <td class="num">10</td>
+                        <td>il y a 2 jours</td>
+                        <td><a class="wp-button-link" href="#">Modifier</a> · <a class="wp-button-link" href="#" style="color: var(--wp-error);">Supprimer</a></td>
+                    </tr>
+                    <tr>
+                        <td><span class="wp-badge wp-badge-success">Active</span></td>
+                        <td>Pages vues / jour</td>
+                        <td>Superieur a</td>
+                        <td class="num">1 000</td>
+                        <td>jamais</td>
+                        <td><a class="wp-button-link" href="#">Modifier</a> · <a class="wp-button-link" href="#" style="color: var(--wp-error);">Supprimer</a></td>
+                    </tr>
+                    <tr>
+                        <td><span class="wp-badge wp-badge-neutral">Desactivee</span></td>
+                        <td>Visiteurs / jour</td>
+                        <td>Superieur a</td>
+                        <td class="num">500</td>
+                        <td>il y a 12 jours</td>
+                        <td><a class="wp-button-link" href="#">Modifier</a> · <a class="wp-button-link" href="#" style="color: var(--wp-error);">Supprimer</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="wp-card">
+            <div class="wp-card-header">
+                <span class="wp-card-title">Historique des declenchements</span>
+                <span style="font-size: 12px; color: var(--wp-text-muted);">30 derniers jours</span>
+            </div>
+            <table class="wp-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Regle</th>
+                        <th class="num">Valeur observee</th>
+                        <th>Notification</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>27 mai 2026 - 23:30</td>
+                        <td>Visiteurs / jour <span style="color: var(--wp-text-muted);">&lt; 10</span></td>
+                        <td class="num">7</td>
+                        <td><span class="wp-badge wp-badge-success">Envoyee</span></td>
+                    </tr>
+                    <tr>
+                        <td>17 mai 2026 - 03:14</td>
+                        <td>Visiteurs / jour <span style="color: var(--wp-text-muted);">&gt; 500</span></td>
+                        <td class="num">612</td>
+                        <td><span class="wp-badge wp-badge-success">Envoyee</span></td>
+                    </tr>
+                    <tr>
+                        <td>11 mai 2026 - 23:30</td>
+                        <td>Visiteurs / jour <span style="color: var(--wp-text-muted);">&lt; 10</span></td>
+                        <td class="num">4</td>
+                        <td><span class="wp-badge wp-badge-success">Envoyee</span></td>
+                    </tr>
+                    <tr>
+                        <td>03 mai 2026 - 23:30</td>
+                        <td>Visiteurs / jour <span style="color: var(--wp-text-muted);">&lt; 10</span></td>
+                        <td class="num">8</td>
+                        <td><span class="wp-badge wp-badge-warning">Echec</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modale de creation, affichee comme exemple -->
+        <div class="wp-card" style="max-width: 600px;">
+            <div class="wp-card-header"><span class="wp-card-title">Nouvelle regle d'alerte</span></div>
+            <div class="wp-card-body">
+                <table class="wp-form-table">
+                    <tr>
+                        <th>Metrique</th>
+                        <td><select class="wp-select"><option>Visiteurs / jour</option><option>Pages vues / jour</option></select></td>
+                    </tr>
+                    <tr>
+                        <th>Condition</th>
+                        <td>
+                            <select class="wp-select" style="max-width: 180px;"><option>Inferieur a</option><option>Superieur a</option></select>
+                            <input type="number" class="wp-input short" style="display: inline-block; margin-left: 8px;" placeholder="seuil">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Etat</th>
+                        <td><label><input type="checkbox" class="wp-checkbox" checked> Activer cette regle immediatement</label></td>
+                    </tr>
+                </table>
+                <p style="margin-top: 16px;">
+                    <button class="wp-button">Creer la regle</button>
+                    <button class="wp-button-secondary wp-button" style="margin-left: 8px;">Annuler</button>
+                </p>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>
