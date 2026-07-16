@@ -186,7 +186,7 @@ Le projet est conçu pour fonctionner sur un hébergement mutualisé contraint
   de préfixe de tables (`finkashi_*`) injecté dans tous les repositories
   via la fabrique.
 - **Pas de variables d'environnement** : les secrets sont lus depuis un
-  fichier `config/secrets.php` non versionné, qui prend le relai du `.env`
+  fichier `config/secrets.php` non versionné, qui prend le relais du `.env`
   utilisé en développement.
 - **Cron externe** : un endpoint dédié `/cron/quotidien` (protégé par clé)
   permet de déclencher la maintenance quotidienne. En production, il est
