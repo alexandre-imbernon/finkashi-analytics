@@ -83,7 +83,7 @@
 }
 
 .finkashi-card-placeholder {
-    color: #787c82;
+    color: #646970;
     font-style: italic;
     font-size: 13px;
     text-align: center;
@@ -161,7 +161,7 @@
 }
 .finkashi-vide {
     text-align: center;
-    color: #787c82;
+    color: #646970;
     font-style: italic;
     padding: 20px !important;
 }
@@ -215,7 +215,7 @@
 }
 
 .finkashi-condition {
-    color: #787c82;
+    color: #646970;
     font-size: 12px;
 }
 
